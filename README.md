@@ -1,4 +1,4 @@
-# Генератор креативных решений: проект оконного приложения с реализацией на PyQt.
+# Генератор креативных решений: проект оконного приложения на PyQt.
 
 ## О проекте
 
@@ -46,7 +46,7 @@ python -m pip install --upgrade pip
 Установить зависимости из файла requirements.txt:
 
 ```
-pip install -r requirements.txt)
+pip install -r requirements.txt
 ```
 
 * Запустить проект:
