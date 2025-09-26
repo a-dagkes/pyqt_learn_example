@@ -18,7 +18,19 @@ elif r == 2:
     type3 = types[6]
     type4 = types[7]
 
-type_choose = ''    
+type_choose = '' 
+
+def choose_type():
+    if type_button1.isChecked():
+        type_choose = type1
+    elif type_button2.isChecked():
+        type_choose = type2
+    elif type_button3.isChecked():
+        type_choose = type3
+    elif type_button4.isChecked():
+        type_choose = type4
+    return type_choose
+  
 
 settings_action = ('альтернативная реальность','исторический', 'научная фантастика', 'постапокалипсис')
 settings_adventure = ('киберпанк', 'нуар', 'постапокалипсис', 'фэнтези')
@@ -29,10 +41,10 @@ settings_sport = ('экстремальные условия', 'историче
 settings_puzzle = ('детективная история','античные цивилизации', 'пространственно-временные манипуляции','пиксельная ретро-графика')
 settings_indie = ('психологический хоррор', 'современность', 'научная фантастика', 'фэнтези')
 
-setting1 = settings_action[randint(0,len(settings_action)-1)]
-setting2 = settings_rpg[randint(0,len(settings_rpg)-1)]
-setting3 = settings_simulation[randint(0,len(settings_simulation)-1)]
-setting4 = settings_puzzle[randint(0,len(settings_puzzle)-1)]
+setting1 = '' #settings_action[randint(0,len(settings_action)-1)]
+setting2 = '' #settings_rpg[randint(0,len(settings_rpg)-1)]
+setting3 = '' #settings_simulation[randint(0,len(settings_simulation)-1)]
+setting4 = '' #settings_puzzle[randint(0,len(settings_puzzle)-1)]
 
 def choose_setting():
     if type_choose == 'экшен':
@@ -75,45 +87,57 @@ def choose_setting():
         setting2 = settings_indie[1]
         setting3 = settings_indie[2]
         setting4 = settings_indie[3]
+    return type_choose
 
 setting_choose = ''
 
-hero_action1 = ('историограф/хранитель памяти','охотник за временем/агент изменений','параллельный двойник/альтер эго','повстанец/бунтарь','патриот-антифашист','детектив','артист','одинокий волк/выживальщик')
-hero_action2 = ('воин/рыцарь','ассасин/убийца','барон/дворянин','мастер-наемник','архитектор/строитель','конкистадор/эксплорер','правитель/император','изобритатель/инженер')
-hero_action3 = ('ученый-изобритатель','космодесантник/солдат будущего','хакер','биоинженер/генетически модифицированный герой','исследователь/первопроходец','андроид/искусственный интеллект','путешественник во времени','механик/инженер-конструктор')
-hero_action4 = ('выживальщик/бродяга','охотник за головой/нарушитель','механик/мастер на все руки','путешественник/исследователь','музыкант/артист','солдат/ветеран','проводник','торговец/меняла')
-hero_adventure1 = ('хакер','детектив/сыщик','корпоративный агент','маргинал/антигерой','биохакер/механик','информационный курьер','технопсихопат','модификатор сознания')
-hero_adventure2 = ('частный детектив','безработный коп','журналист-исследователь','наемный убийца','художник/богемный детектив','бывший заключенный/полицейский-мошенник','телохранитель','консультант/информатор')
-hero_adventure3 = ('выживальщик','купец/поставщик','автопутешественник','исследователь/картограф','следопыт/скаут','вооруженный защитник','естествоиспытатель/ботаник','творец/ремесленник')
-hero_adventure4 = ('маг/волшебник','воин/рыцарь','приржденный лидер/полководец','механик/изобритатель','некромант/повелитель мертвецов','друид/покровитель природы','шахтер/кузнец','драконоборец/охотник на монстров','политик/дипломат')
-hero_rpg1 = ('инженер/техник','командир/лидер','хакер','космический пилот/астронавт','ученый-исследователь','военный/солдат','андроид/искусственный интеллект','космический торговец','мециниский работник','контабандист/пират')
-hero_rpg2 = ('выживальщик','трейдер/проводник','воин/военачальник','сборщик/промышленник','музыкант/артист','садовод','железнодорожник/водитель','мастер','механик','ркуводитель коммуны')
-hero_rpg3 = ('маг/волшебник','охотник на монстров','экстрасенс/ясновидящий','демон/полудемон','ангел/небесный посланник','экзорцист/изгоняющий демонов','исследователь паранормальных явлений','архивариус','детектив','призрак/умерший дух','')
-hero_rpg4 = ('маг/волшебник','воин/рыцарь','лидер/король','механик/инженер','некромант/повелитель нежити','друид/жрец природы','горняк/кузнец','драконоборец/охотник на монстров','политик/государственный деятель')
-hero_strategy1 = ('геометр','цветовод','логик','музыкант','хаотик','аннигилятор','диффузор','абстрактер')
-hero_strategy2 = ('командир армии ИИ','хакер - человек-киборг','ученый - специалист по биотехнологиям','техник-профессионал','биомеханический боец','оператор беспилотника','руководитель компании')
-hero_strategy3 = ('параисторик','агент времени','прорицатель','хроноанархист','архитектор реальности','хранитель хроносферы','антропологический консультант')
-hero_strategy4 = ('рыцарь','волшебник/маг','разведчик/лучник','крестьянин/рабочий','алхимик/инженер','генерал/король','священнослужитель/жрец','')
-hero_simlation1 = ('пилот гражданской авиации','Нейрохирург','дальнобойщик','аспирант-исследователь')
-hero_simlation2 = ('капитан дальнего плавания','робототехник космических кораблей','гид-экскурсовод','археолог-архивариус древнего храма')
-hero_simlation3 = ('археолог раскопок древних поселений','лесник заповедника редких деревьев','биолог-защитник коралловых рифов','паркостроитель зелёных насаждений')
-hero_simlation4 = ('девелопер жилой застройки','инвестор фондового рынка','администратор крупного гостиничного комплекса','владелец ресторана национальной кухни')
-hero_sport1 = ('профессиональный экстремал','авантюрист, ищущий приключения','трюкач','гонщик')
-hero_sport2 = ('старинный атлет','выдющийся исторически известный игрок','игрок спортивного клуба','игрок сборной')
-hero_sport3 = ('какрикатурная версия знаменитости','смехотворный образ животного','веселый мультяшный персонаж','сказочное существо')
-hero_sport4 = ('воин-маг','супергерой','мутант','антропоморфоное животное')
-hero_puzzle1 = ('частный детектив','журналист','криминалист','бывший шпион','следователь','аналитик больших данных')
-hero_puzzle2 = ('археолог','исследователь','историк','римский легионер','египетсикй жрец','египетский фараон','древнегреческий герой')
-hero_puzzle3 = ('изобритатель-путешественник во времени','физик-теоретик','мастер портала','коллекционер','путешественник сквозь параллельные реальности')
-hero_puzzle4 = ('старый игровой персонаж','любитель старых консолей','виртуальный аватар прошлого','создатель классических аркадных игр')
+def type_setting():
+    if setting_button1.isChecked():
+        setting_choose = setting1
+    elif setting_button2.isChecked():
+        setting_choose = setting2
+    elif setting_button3.isChecked():
+        setting_choose = setting3
+    elif setting_button4.isChecked():
+        setting_choose = setting4
+    return setting_choose
+
+hero_action1 = ('историограф/хранитель памяти','охотник за временем/агент изменений','параллельный двойник/альтер эго')
+hero_action2 = ('воин/рыцарь','ассасин/убийца','правитель/император')
+hero_action3 = ('космодесантник/солдат будущего','хакер','механик/инженер-конструктор')
+hero_action4 = ('выживальщик/бродяга','охотник за головой/нарушитель','проводник')
+hero_adventure1 = ('хакер','маргинал/антигерой','модификатор сознания')
+hero_adventure2 = ('безработный коп','журналист-исследователь','консультант/информатор')
+hero_adventure3 = ('выживальщик','купец/поставщик','исследователь/картограф')
+hero_adventure4 = ('приржденный лидер/полководец','некромант/повелитель мертвецов','политик/дипломат')
+hero_rpg1 = ('инженер/техник','ученый-исследователь','контабандист/пират')
+hero_rpg2 = ('трейдер/проводник','железнодорожник/водитель','рукводитель коммуны')
+hero_rpg3 = ('экстрасенс/ясновидящий','ангел/небесный посланник','детектив')
+hero_rpg4 = ('некромант/повелитель нежити','друид/жрец природы','драконоборец/охотник на монстров')
+hero_strategy1 = ('логик','музыкант','хаотик')
+hero_strategy2 = ('командир армии ИИ','хакер - человек-киборг','биомеханический боец')
+hero_strategy3 = ('хроноанархист','архитектор реальности','хранитель хроносферы')
+hero_strategy4 = ('разведчик/лучник','алхимик/инженер','священнослужитель/жрец')
+hero_simlation1 = ('пилот гражданской авиации','Нейрохирург','дальнобойщик')
+hero_simlation2 = ('капитан дальнего плавания','робототехник космических кораблей','археолог-архивариус древнего храма')
+hero_simlation3 = ('археолог раскопок древних поселений','биолог-защитник коралловых рифов','паркостроитель зелёных насаждений')
+hero_simlation4 = ('девелопер жилой застройки','инвестор фондового рынка','администратор крупного гостиничного комплекса')
+hero_sport1 = ('профессиональный экстремал','авантюрист, ищущий приключения','трюкач')
+hero_sport2 = ('старинный атлет','выдющийся исторически известный игрок','игрок спортивного клуба')
+hero_sport3 = ('какрикатурная версия знаменитости','веселый мультяшный персонаж','сказочное существо')
+hero_sport4 = ('супергерой','мутант','антропоморфоное животное')
+hero_puzzle1 = ('частный детектив','журналист','следователь')
+hero_puzzle2 = ('археолог','египетсикй жрец','египетский фараон')
+hero_puzzle3 = ('изобритатель-путешественник во времени','мастер портала','путешественник сквозь параллельные реальности')
+hero_puzzle4 = ('любитель старых консолей','виртуальный аватар прошлого','создатель классических аркадных игр')
 hero_indie1 = ('детектив-психолог','ученик ученого, потерявшего рассудок','лесничий')
 hero_indie2 = ('художник','старшеклассник','коллекционер книг')
 hero_indie3 = ('инженер-исследователь','капитан корабля','искусственный интеллект робота-философа')
 hero_indie4 = ('друид','привидение','библиотекарь')
 
-hero1 = hero_indie1[randint(0,len(hero_indie1)-1)]
-hero2 = hero_adventure1[randint(0,len(hero_adventure1)-1)]
-hero3 = hero_strategy1[randint(0,len(hero_strategy1)-1)]
+hero1 = '' #hero_indie1[randint(0,len(hero_indie1)-1)]
+hero2 = '' #hero_adventure1[randint(0,len(hero_adventure1)-1)]
+hero3 = '' #hero_strategy1[randint(0,len(hero_strategy1)-1)]
 
 def choose_hero():
     if type_choose == 'экшен' and setting_choose == 'альтернативная реальность':
@@ -244,6 +268,7 @@ def choose_hero():
         hero1 = hero_indie4[0]
         hero2 = hero_indie4[1]
         hero3 = hero_indie4[2]
+
     
 def click_ok():
     if button_next.text() == 'Начать заново':
@@ -259,7 +284,6 @@ def show_result():
     hero.hide()
     button_next.setText('Начать заново')
 
-
 def restart():
     typegroup.setExclusive(False)    
     type_button1.setChecked(False)
@@ -267,6 +291,18 @@ def restart():
     type_button3.setChecked(False)
     type_button4.setChecked(False)
     typegroup.setExclusive(True) 
+    shuffle(types)
+    r = randint(1,2)
+    if r == 1:
+        type1 = types[0]
+        type2 = types[1]
+        type3 = types[2]
+        type4 = types[3]
+    elif r == 2:
+        type1 = types[4]
+        type2 = types[5]
+        type3 = types[6]
+        type4 = types[7]
     typebox.show()
     settinggroup.setExclusive(False)    
     setting_button1.setChecked(False)
@@ -427,30 +463,27 @@ main = QWidget()
 main.setWindowTitle('Генератор идей для разработки видеоигр')
 main.resize (1000,500)
 main.setLayout(main_layout)
-if type_button1.isChecked():
-    type_choose = type1
-    type_button1.clicked.connect(choose_setting)
-elif type_button2.isChecked():
-    type_choose = type2
-    type_button2.clicked.connect(choose_setting)
-elif type_button3.isChecked():
-    type_choose = type3
-    type_button3.clicked.connect(choose_setting)
-elif type_button4.isChecked():
-    type_choose = type4
-    type_button4.clicked.connect(choose_setting)
-if setting_button1.isChecked():
-    setting_choose = setting1
-    setting_button1.clicked.connect(choose_hero)
-elif setting_button2.isChecked():
-    setting_choose = setting2
-    setting_button2.clicked.connect(choose_hero)
-elif setting_button3.isChecked():
-    setting_choose = setting3
-    setting_button3.clicked.connect(choose_hero)
-elif setting_button4.isChecked():
-    setting_choose = setting4
-    setting_button4.clicked.connect(choose_hero)
+
+
+type_button1.clicked.connect(choose_type)
+choose_setting()
+type_button2.clicked.connect(choose_type)
+choose_setting()
+type_button3.clicked.connect(choose_type)
+choose_setting()
+type_button4.clicked.connect(choose_type)
+choose_setting()
+
+
+setting_button1.clicked.connect(type_setting)
+choose_hero()
+setting_button2.clicked.connect(type_setting)
+choose_hero()
+setting_button3.clicked.connect(type_setting)
+choose_hero()
+setting_button4.clicked.connect(type_setting)
+choose_hero()
+
 button_next.clicked.connect(click_ok)
 
 
