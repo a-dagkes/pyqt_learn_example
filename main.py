@@ -1,8 +1,9 @@
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import *
 from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, 
 QLabel, QVBoxLayout, QHBoxLayout, QMessageBox, 
 QGroupBox, QButtonGroup, QRadioButton, QSlider, QCheckBox)
 from PyQt5.QtGui import *
+from PIL import Image, ImageDraw, ImageFont
 from random import randint, shuffle
 types = ['экшен', 'приключения', 'РПГ', 'стратегия', 'симулятор', 'спорт', 'головоломка', 'инди']
 shuffle(types)
@@ -41,10 +42,10 @@ settings_sport = ('экстремальные условия', 'историче
 settings_puzzle = ('детективная история','античные цивилизации', 'пространственно-временные манипуляции','пиксельная ретро-графика')
 settings_indie = ('психологический хоррор', 'современность', 'научная фантастика', 'фэнтези')
 
-setting1 = '' #settings_action[randint(0,len(settings_action)-1)]
-setting2 = '' #settings_rpg[randint(0,len(settings_rpg)-1)]
-setting3 = '' #settings_simulation[randint(0,len(settings_simulation)-1)]
-setting4 = '' #settings_puzzle[randint(0,len(settings_puzzle)-1)]
+setting1 = ''
+setting2 = ''
+setting3 = ''
+setting4 = ''
 
 def choose_setting():
     if type_choose == 'экшен':
@@ -135,9 +136,9 @@ hero_indie2 = ('художник','старшеклассник','коллекц
 hero_indie3 = ('инженер-исследователь','капитан корабля','искусственный интеллект робота-философа')
 hero_indie4 = ('друид','привидение','библиотекарь')
 
-hero1 = '' #hero_indie1[randint(0,len(hero_indie1)-1)]
-hero2 = '' #hero_adventure1[randint(0,len(hero_adventure1)-1)]
-hero3 = '' #hero_strategy1[randint(0,len(hero_strategy1)-1)]
+hero1 = ''
+hero2 = ''
+hero3 = ''
 
 def choose_hero():
     if type_choose == 'экшен' and setting_choose == 'альтернативная реальность':
@@ -282,6 +283,10 @@ def show_result():
     difficult.hide()
     choose.hide()
     hero.hide()
+    image = Image.open("1.Тайна советсткой империи.jpg")
+    draw = ImageDraw.Draw(image)
+    font = ImageFont.load_default()
+    draw.text((50, 250), "Hello Pillow!", font=font)
     button_next.setText('Начать заново')
 
 def restart():
@@ -303,6 +308,7 @@ def restart():
         type2 = types[5]
         type3 = types[6]
         type4 = types[7]
+    typebox.update()
     typebox.show()
     settinggroup.setExclusive(False)    
     setting_button1.setChecked(False)
@@ -310,14 +316,21 @@ def restart():
     setting_button3.setChecked(False)
     setting_button4.setChecked(False)
     settinggroup.setExclusive(True) 
+    setting.update()
     setting.show()
     difficult.show()
+    choosegroup.setExclusive(False)
+    choose_solo.setChecked(False)
+    choose_multy.setChecked(False)
+    choosegroup.setExclusive(True)
+    choose.update()
     choose.show()
     hero_group.setExclusive(False)    
     hero1_button.setChecked(False)
     hero2_button.setChecked(False)
     hero3_button.setChecked(False)
     hero_group.setExclusive(True) 
+    hero.update()
     hero.show()
     button_next.setText('Показать результат')
 
@@ -326,11 +339,16 @@ app = QApplication([])
 
 button_next = QPushButton('Показать результат')
 
+
 typebox = QGroupBox('Выбери жанр игры')
 type_button1 = QRadioButton(type1)
 type_button2 = QRadioButton(type2)
 type_button3 = QRadioButton(type3)
 type_button4 = QRadioButton(type4)
+type_button1.setCheckable(True)
+type_button2.setCheckable(True)
+type_button3.setCheckable(True)
+type_button4.setCheckable(True)
 typegroup = QButtonGroup()
 typegroup.addButton(type_button1)
 typegroup.addButton(type_button2)
@@ -352,6 +370,10 @@ setting_button1 = QRadioButton(setting1)
 setting_button2 = QRadioButton(setting2)
 setting_button3 = QRadioButton(setting3)
 setting_button4 = QRadioButton(setting4)
+setting_button1.setCheckable(True)
+setting_button2.setCheckable(True)
+setting_button3.setCheckable(True)
+setting_button4.setCheckable(True)
 settinggroup = QButtonGroup()
 settinggroup.addButton(setting_button1)
 settinggroup.addButton(setting_button2)
@@ -390,9 +412,9 @@ difficult.setLayout(difficult_line1)
 
 choose = QGroupBox('Выбери тип игры')
 choose_solo = QPushButton('Одиночный режим')
-choose_solo.setGeometry(50, 40, 50, 40)
 choose_multy = QPushButton('Мультиплеер')
-choose_multy.setGeometry(50, 40, 50, 40)
+choose_solo.setCheckable(True)
+choose_multy.setCheckable(True)
 choosegroup = QButtonGroup()
 choosegroup.addButton(choose_solo)
 choosegroup.addButton(choose_multy)
@@ -407,6 +429,9 @@ hero = QGroupBox('Выбери героя')
 hero1_button = QCheckBox(hero1)
 hero2_button = QCheckBox(hero2)
 hero3_button = QCheckBox(hero3)
+hero1_button.setCheckable(True)
+hero2_button.setCheckable(True)
+hero3_button.setCheckable(True)
 hero_group = QButtonGroup()
 hero_group.addButton(hero1_button)
 hero_group.addButton(hero2_button)
@@ -442,7 +467,6 @@ layout_line1.addLayout(layout_line2, stretch=5)
 layout_line1.addStretch(1)
 layout_line1.addLayout(layout_line3, stretch=5)
 
-
 layout_line4.addStretch(1)
 layout_line4.addWidget(hero, stretch=10)
 layout_line4.addStretch(1)
@@ -464,30 +488,54 @@ main.setWindowTitle('Генератор идей для разработки в�
 main.resize (1000,500)
 main.setLayout(main_layout)
 
-
 type_button1.clicked.connect(choose_type)
+setting.hide()
+setting.update()
+setting.show()
 choose_setting()
 type_button2.clicked.connect(choose_type)
+setting.hide()
+setting.update()
+setting.show()
 choose_setting()
 type_button3.clicked.connect(choose_type)
+setting.hide()
+setting.update()
+setting.show()
 choose_setting()
 type_button4.clicked.connect(choose_type)
+setting.hide()
+setting.update()
+setting.show()
 choose_setting()
 
 
 setting_button1.clicked.connect(type_setting)
+hero.hide()
+hero.update()
+hero.show()
 choose_hero()
 setting_button2.clicked.connect(type_setting)
+hero.hide()
+hero.update()
+hero.show()
 choose_hero()
 setting_button3.clicked.connect(type_setting)
+hero.hide()
+hero.update()
+hero.show()
 choose_hero()
 setting_button4.clicked.connect(type_setting)
+hero.hide()
+hero.update()
+hero.show()
 choose_hero()
 
 button_next.clicked.connect(click_ok)
 
-
+main.update()
 main.show()
 app.exec_()
+
 
 
