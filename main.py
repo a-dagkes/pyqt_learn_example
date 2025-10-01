@@ -7,7 +7,7 @@ from PIL import Image, ImageDraw, ImageFont
 from random import randint, shuffle
 types = ['экшен', 'приключения', 'РПГ', 'стратегия', 'симулятор', 'спорт', 'головоломка', 'инди']
 shuffle(types)
-r = randint(1,2)
+r = randint(1, 2)
 if r == 1:
     type1 = types[0]
     type2 = types[1]
@@ -112,7 +112,7 @@ def type_setting():
             hero3_button.setText(hero_simulation1[2])
         elif setting_button1.text() == settings_sport[0]:
             hero1_button.setText(hero_sport1[0])
-            hero2_button.setText(hero_sporty1[1])
+            hero2_button.setText(hero_sport1[1])
             hero3_button.setText(hero_sport1[2])
         elif setting_button1.text() == settings_puzzle[0]:
             hero1_button.setText(hero_puzzle1[0])
@@ -145,7 +145,7 @@ def type_setting():
             hero3_button.setText(hero_simulation2[2])
         elif setting_button1.text() == settings_sport[1]:
             hero1_button.setText(hero_sport2[0])
-            hero2_button.setText(hero_sporty2[1])
+            hero2_button.setText(hero_sport2[1])
             hero3_button.setText(hero_sport2[2])
         elif setting_button1.text() == settings_puzzle[1]:
             hero1_button.setText(hero_puzzle2[0])
@@ -178,7 +178,7 @@ def type_setting():
             hero3_button.setText(hero_simulation3[2])
         elif setting_button1.text() == settings_sport[2]:
             hero1_button.setText(hero_sport3[0])
-            hero2_button.setText(hero_sporty3[1])
+            hero2_button.setText(hero_sport3[1])
             hero3_button.setText(hero_sport3[2])
         elif setting_button1.text() == settings_puzzle[2]:
             hero1_button.setText(hero_puzzle3[0])
@@ -239,10 +239,10 @@ hero_strategy1 = ('логик','музыкант','хаотик')
 hero_strategy2 = ('командир армии ИИ','хакер - человек-киборг','биомеханический боец')
 hero_strategy3 = ('хроноанархист','архитектор реальности','хранитель хроносферы')
 hero_strategy4 = ('разведчик/лучник','алхимик/инженер','священнослужитель/жрец')
-hero_simlation1 = ('пилот гражданской авиации','Нейрохирург','дальнобойщик')
-hero_simlation2 = ('капитан дальнего плавания','робототехник космических кораблей','археолог-архивариус древнего храма')
-hero_simlation3 = ('археолог раскопок древних поселений','биолог-защитник коралловых рифов','паркостроитель зелёных насаждений')
-hero_simlation4 = ('девелопер жилой застройки','инвестор фондового рынка','администратор крупного гостиничного комплекса')
+hero_simulation1 = ('пилот гражданской авиации','Нейрохирург','дальнобойщик')
+hero_simulation2 = ('капитан дальнего плавания','робототехник космических кораблей','археолог-архивариус древнего храма')
+hero_simulation3 = ('археолог раскопок древних поселений','биолог-защитник коралловых рифов','паркостроитель зелёных насаждений')
+hero_simulation4 = ('девелопер жилой застройки','инвестор фондового рынка','администратор крупного гостиничного комплекса')
 hero_sport1 = ('профессиональный экстремал','авантюрист, ищущий приключения','трюкач')
 hero_sport2 = ('старинный атлет','выдющийся исторически известный игрок','игрок спортивного клуба')
 hero_sport3 = ('какрикатурная версия знаменитости','веселый мультяшный персонаж','сказочное существо')
@@ -485,7 +485,7 @@ main_layout.setSpacing(2)
 
 main = QWidget()
 main.setWindowTitle('Генератор идей для разработки видеоигр')
-main.resize (1000,500)
+main.resize(1000, 500)
 main.setLayout(main_layout)
 
 type_button1.clicked.connect(choose_type)
