@@ -52,7 +52,7 @@ pip install -r requirements.txt
 * Запустить проект:
 
 ```
-python my_app.py
+python main.py
 ```
 
 ##
