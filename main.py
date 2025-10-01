@@ -272,10 +272,10 @@ def show_result():
     hero.hide()
     button_next.setText('Начать заново')
 
-#image = Image.open("1.Тайна советсткой империи.jpg")
-#draw = ImageDraw.Draw(image)
-#font = ImageFont.load_default()
-#draw.text((50, 250), "Hello Pillow!", font=font)
+image = Image.open("1.Тайна советсткой империи.jpg")
+draw = ImageDraw.Draw(image)
+font = ImageFont.load_default()
+draw.text((50, 250), "Hello Pillow!", font=font)
 
 def restart():
     shuffle(types)
@@ -445,7 +445,7 @@ hero_line1.addLayout(hero_line4)
 hero.setLayout(hero_line1)
 
 i_line = QLabel()
-# i_line.setPixmap(QPixmap("1.Тайна советсткой империи.jpg"))
+i_line.setPixmap(QPixmap("1.Тайна советсткой империи.jpg"))
 i_line.hide()
 
 layout_line1 = QHBoxLayout()
