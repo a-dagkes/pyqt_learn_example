@@ -810,6 +810,7 @@ def show_result():
 
 def restart():
     i_line.hide()
+    label.hide()
     shuffle(types)
     typegroup.setExclusive(False)    
     type_button1.setChecked(False)
@@ -1047,3 +1048,4 @@ button_next.clicked.connect(click_ok)
 
 main.show()
 app.exec_()
+
