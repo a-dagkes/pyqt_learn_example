@@ -1,1051 +1,370 @@
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, 
-QLabel, QVBoxLayout, QHBoxLayout, QMessageBox, 
-QGroupBox, QButtonGroup, QRadioButton, QSlider, QCheckBox)
-from PyQt5.QtGui import QPixmap
-from PIL import Image, ImageDraw, ImageFont
-from random import randint, shuffle
-types = ['экшен', 'приключения', 'РПГ', 'стратегия', 'симулятор', 'спорт', 'головоломка', 'инди']
-shuffle(types)
-r = randint(1,2)
-if r == 1:
-    type1 = types[0]
-    type2 = types[1]
-    type3 = types[2]
-    type4 = types[3]
-elif r == 2:
-    type1 = types[4]
-    type2 = types[5]
-    type3 = types[6]
-    type4 = types[7]
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import (
+    QApplication, QButtonGroup, QCheckBox, QGroupBox, 
+    QHBoxLayout, QLabel, QPushButton, QRadioButton, 
+    QSlider, QVBoxLayout, QWidget
+)
+from PyQt5.QtGui import QIcon, QPixmap
 
-type_choose = '' 
-
-def choose_type():
-    global type_choose
-    if type_button1.isChecked():
-        type_choose = type1
-    elif type_button2.isChecked():
-        type_choose = type2
-    elif type_button3.isChecked():
-        type_choose = type3
-    elif type_button4.isChecked():
-        type_choose = type4
-    choose_setting()
-  
-
-settings_action = ('альтернативная реальность','исторический', 'научная фантастика', 'постапокалипсис')
-settings_adventure = ('киберпанк', 'нуар', 'постапокалипсис', 'фэнтези')
-settings_rpg = ('научная фантастика', 'постапокалипсис', 'сверхъестественное', 'фэнтези')
-settings_strategy = ('абстрактные миры', 'будущее с искусственным интеллектом', 'альтернативная реальность', 'средневековье')
-settings_simulation = ('профессии', 'путешествия и приключения', 'экологическая деятельность', 'экономика и бизнес')
-settings_sport = ('экстремальные условия', 'историческое воссоздание', 'аркадный юмор и карикатурный стиль', 'фэнтези')
-settings_puzzle = ('детективная история','античные цивилизации', 'пространственно-временные манипуляции','пиксельная ретро-графика')
-settings_indie = ('психологический хоррор', 'современность', 'научная фантастика', 'фэнтези')
+from random import shuffle
+from pathlib import Path
+import json
 
 
-def choose_setting():
-    if type_choose == 'экшен':
-        setting_button1.setText(settings_action[0])
-        setting_button2.setText(settings_action[1])
-        setting_button3.setText(settings_action[2])
-        setting_button4.setText(settings_action[3])
-    elif type_choose == 'приключения':
-        setting_button1.setText(settings_adventure[0])
-        setting_button2.setText(settings_adventure[1])
-        setting_button3.setText(settings_adventure[2])
-        setting_button4.setText(settings_adventure[3])
-    elif type_choose == 'РПГ':
-        setting_button1.setText(settings_rpg[0])
-        setting_button2.setText(settings_rpg[1])
-        setting_button3.setText(settings_rpg[2])
-        setting_button4.setText(settings_rpg[3])
-    elif type_choose == 'стратегия':
-        setting_button1.setText(settings_strategy[0])
-        setting_button2.setText(settings_strategy[1])
-        setting_button3.setText(settings_strategy[2])
-        setting_button4.setText(settings_strategy[3])
-    elif type_choose == 'симулятор':
-        setting_button1.setText(settings_simulation[0])
-        setting_button2.setText(settings_simulation[1])
-        setting_button3.setText(settings_simulation[2])
-        setting_button4.setText(settings_simulation[3])
-    elif type_choose == 'спорт':
-        setting_button1.setText(settings_sport[0])
-        setting_button2.setText(settings_sport[1])
-        setting_button3.setText(settings_sport[2])
-        setting_button4.setText(settings_sport[3])
-    elif type_choose == 'головоломка':
-        setting_button1.setText(settings_puzzle[0])
-        setting_button2.setText(settings_puzzle[1])
-        setting_button3.setText(settings_puzzle[2])
-        setting_button4.setText(settings_puzzle[3])
-    elif type_choose == 'инди':
-        setting_button1.setText(settings_indie[0])
-        setting_button2.setText(settings_indie[1])
-        setting_button3.setText(settings_indie[2])
-        setting_button4.setText(settings_indie[3])
-    return type_choose
+IMAGES_DIR = Path("images")
 
-hero_action1 = ('историограф/хранитель памяти','охотник за временем/агент изменений','параллельный двойник/альтер эго')
-hero_action2 = ('воин/рыцарь','ассасин/убийца','правитель/император')
-hero_action3 = ('космодесантник/солдат будущего','хакер','механик/инженер-конструктор')
-hero_action4 = ('выживальщик/бродяга','охотник за головой/нарушитель','проводник')
-hero_adventure1 = ('хакер','маргинал/антигерой','модификатор сознания')
-hero_adventure2 = ('безработный коп','журналист-исследователь','консультант/информатор')
-hero_adventure3 = ('выживальщик','купец/поставщик','исследователь/картограф')
-hero_adventure4 = ('прирожденный лидер/полководец','некромант/повелитель мертвецов','политик/дипломат')
-hero_rpg1 = ('инженер/техник','ученый-исследователь','контабандист/пират')
-hero_rpg2 = ('трейдер/проводник','железнодорожник/водитель','рукводитель коммуны')
-hero_rpg3 = ('экстрасенс/ясновидящий','ангел/небесный посланник','детектив')
-hero_rpg4 = ('некромант/повелитель нежити','друид/жрец природы','драконоборец/охотник на монстров')
-hero_strategy1 = ('логик','музыкант','хаотик')
-hero_strategy2 = ('командир армии ИИ','хакер - человек-киборг','биомеханический боец')
-hero_strategy3 = ('хроноанархист','архитектор реальности','хранитель хроносферы')
-hero_strategy4 = ('разведчик/лучник','алхимик/инженер','священнослужитель/жрец')
-hero_simulation1 = ('пилот гражданской авиации','нейрохирург','дальнобойщик')
-hero_simulation2 = ('капитан дальнего плавания','робототехник космических кораблей','археолог-архивариус древнего храма')
-hero_simulation3 = ('археолог раскопок древних поселений','биолог-защитник коралловых рифов','паркостроитель зелёных насаждений')
-hero_simulation4 = ('девелопер жилой застройки','инвестор фондового рынка','администратор крупного гостиничного комплекса')
-hero_sport1 = ('профессиональный экстремал','авантюрист, ищущий приключения','трюкач')
-hero_sport2 = ('старинный атлет','выдющийся исторически известный игрок','игрок спортивного клуба')
-hero_sport3 = ('карикатурная версия знаменитости','веселый мультяшный персонаж','сказочное существо')
-hero_sport4 = ('супергерой','мутант','антропоморфоное животное')
-hero_puzzle1 = ('частный детектив','журналист','следователь')
-hero_puzzle2 = ('археолог','исследователь','историк')
-hero_puzzle3 = ('изобритатель-путешественник во времени','мастер портала','путешественник сквозь параллельные реальности')
-hero_puzzle4 = ('любитель старых консолей','виртуальный аватар прошлого','создатель классических аркадных игр')
-hero_indie1 = ('детектив-психолог','ученик ученого, потерявшего рассудок','лесничий')
-hero_indie2 = ('художник','старшеклассник','коллекционер книг')
-hero_indie3 = ('инженер-исследователь','капитан корабля','искусственный интеллект робота-философа')
-hero_indie4 = ('друид','привидение','библиотекарь')
 
-def type_setting():
-    if setting_button1.isChecked():
-        if setting_button1.text() == settings_action[0]:
-            hero1_button.setText(hero_action1[0])
-            hero2_button.setText(hero_action1[1])
-            hero3_button.setText(hero_action1[2])
-        elif setting_button1.text() == settings_adventure[0]:
-            hero1_button.setText(hero_adventure1[0])
-            hero2_button.setText(hero_adventure1[1])
-            hero3_button.setText(hero_adventure1[2])
-        elif setting_button1.text() == settings_rpg[0]:
-            hero1_button.setText(hero_rpg1[0])
-            hero2_button.setText(hero_rpg1[1])
-            hero3_button.setText(hero_rpg1[2])
-        elif setting_button1.text() == settings_strategy[0]:
-            hero1_button.setText(hero_strategy1[0])
-            hero2_button.setText(hero_strategy1[1])
-            hero3_button.setText(hero_strategy1[2])
-        elif setting_button1.text() == settings_simulation[0]:
-            hero1_button.setText(hero_simulation1[0])
-            hero2_button.setText(hero_simulation1[1])
-            hero3_button.setText(hero_simulation1[2])
-        elif setting_button1.text() == settings_sport[0]:
-            hero1_button.setText(hero_sport1[0])
-            hero2_button.setText(hero_sport1[1])
-            hero3_button.setText(hero_sport1[2])
-        elif setting_button1.text() == settings_puzzle[0]:
-            hero1_button.setText(hero_puzzle1[0])
-            hero2_button.setText(hero_puzzle1[1])
-            hero3_button.setText(hero_puzzle1[2])
-        elif setting_button1.text() == settings_indie[0]:
-            hero1_button.setText(hero_indie1[0])
-            hero2_button.setText(hero_indie1[1])
-            hero3_button.setText(hero_indie1[2])
-    elif setting_button2.isChecked():
-        if setting_button2.text() == settings_action[1]:
-            hero1_button.setText(hero_action2[0])
-            hero2_button.setText(hero_action2[1])
-            hero3_button.setText(hero_action2[2])
-        elif setting_button2.text() == settings_adventure[1]:
-            hero1_button.setText(hero_adventure2[0])
-            hero2_button.setText(hero_adventure2[1])
-            hero3_button.setText(hero_adventure2[2])
-        elif setting_button2.text() == settings_rpg[1]:
-            hero1_button.setText(hero_rpg2[0])
-            hero2_button.setText(hero_rpg2[1])
-            hero3_button.setText(hero_rpg2[2])
-        elif setting_button2.text() == settings_strategy[1]:
-            hero1_button.setText(hero_strategy2[0])
-            hero2_button.setText(hero_strategy2[1])
-            hero3_button.setText(hero_strategy2[2])
-        elif setting_button2.text() == settings_simulation[1]:
-            hero1_button.setText(hero_simulation2[0])
-            hero2_button.setText(hero_simulation2[1])
-            hero3_button.setText(hero_simulation2[2])
-        elif setting_button2.text() == settings_sport[1]:
-            hero1_button.setText(hero_sport2[0])
-            hero2_button.setText(hero_sport2[1])
-            hero3_button.setText(hero_sport2[2])
-        elif setting_button2.text() == settings_puzzle[1]:
-            hero1_button.setText(hero_puzzle2[0])
-            hero2_button.setText(hero_puzzle2[1])
-            hero3_button.setText(hero_puzzle2[2])
-        elif setting_button2.text() == settings_indie[1]:
-            hero1_button.setText(hero_indie2[0])
-            hero2_button.setText(hero_indie2[1])
-            hero3_button.setText(hero_indie2[2])   
-    elif setting_button3.isChecked():
-        if setting_button3.text() == settings_action[2]:
-            hero1_button.setText(hero_action3[0])
-            hero2_button.setText(hero_action3[1])
-            hero3_button.setText(hero_action3[2])
-        elif setting_button3.text() == settings_adventure[2]:
-            hero1_button.setText(hero_adventure3[0])
-            hero2_button.setText(hero_adventure3[1])
-            hero3_button.setText(hero_adventure3[2])
-        elif setting_button3.text() == settings_rpg[2]:
-            hero1_button.setText(hero_rpg3[0])
-            hero2_button.setText(hero_rpg3[1])
-            hero3_button.setText(hero_rpg3[2])
-        elif setting_button3.text() == settings_strategy[2]:
-            hero1_button.setText(hero_strategy3[0])
-            hero2_button.setText(hero_strategy3[1])
-            hero3_button.setText(hero_strategy3[2])
-        elif setting_button3.text() == settings_simulation[2]:
-            hero1_button.setText(hero_simulation3[0])
-            hero2_button.setText(hero_simulation3[1])
-            hero3_button.setText(hero_simulation3[2])
-        elif setting_button3.text() == settings_sport[2]:
-            hero1_button.setText(hero_sport3[0])
-            hero2_button.setText(hero_sport3[1])
-            hero3_button.setText(hero_sport3[2])
-        elif setting_button3.text() == settings_puzzle[2]:
-            hero1_button.setText(hero_puzzle3[0])
-            hero2_button.setText(hero_puzzle3[1])
-            hero3_button.setText(hero_puzzle3[2])
-        elif setting_button3.text() == settings_indie[2]:
-            hero1_button.setText(hero_indie3[0])
-            hero2_button.setText(hero_indie3[1])
-            hero3_button.setText(hero_indie3[2])
-    elif setting_button4.isChecked():
-        if setting_button4.text() == settings_action[3]:
-            hero1_button.setText(hero_action4[0])
-            hero2_button.setText(hero_action4[1])
-            hero3_button.setText(hero_action4[2])
-        elif setting_button4.text() == settings_adventure[3]:
-            hero1_button.setText(hero_adventure4[0])
-            hero2_button.setText(hero_adventure4[1])
-            hero3_button.setText(hero_adventure4[2])
-        elif setting_button4.text() == settings_rpg[3]:
-            hero1_button.setText(hero_rpg4[0])
-            hero2_button.setText(hero_rpg4[1])
-            hero3_button.setText(hero_rpg4[2])
-        elif setting_button4.text() == settings_strategy[3]:
-            hero1_button.setText(hero_strategy4[0])
-            hero2_button.setText(hero_strategy4[1])
-            hero3_button.setText(hero_strategy4[2])
-        elif setting_button4.text() == settings_simulation[3]:
-            hero1_button.setText(hero_simulation4[0])
-            hero2_button.setText(hero_simulation4[1])
-            hero3_button.setText(hero_simulation4[2])
-        elif setting_button4.text() == settings_sport[3]:
-            hero1_button.setText(hero_sport4[0])
-            hero2_button.setText(hero_sport4[1])
-            hero3_button.setText(hero_sport4[2])
-        elif setting_button4.text() == settings_puzzle[3]:
-            hero1_button.setText(hero_puzzle4[0])
-            hero2_button.setText(hero_puzzle4[1])
-            hero3_button.setText(hero_puzzle4[2])
-        elif setting_button4.text() == settings_indie[3]:
-            hero1_button.setText(hero_indie4[0])
-            hero2_button.setText(hero_indie4[1])
-            hero3_button.setText(hero_indie4[2])
+class MainWin(QWidget):
+    def __init__(self, data=None):
+        super().__init__()
+        self.setWindowTitle('Генератор идей для разработки видеоигр')
+        self.resize(1000,500)
+        self.setWindowIcon(QIcon('icon.png'))
+        main_layout = QVBoxLayout()
+        self.setLayout(main_layout)
+
+        self.data = data
+        self.types = list(self.data.keys())
+        self.type_choice = ''
+        self.setting_choice = ''
+        self.hero_choice = ''
+
+        self.button_next = QPushButton('Показать результат')
+
+        self.typebox = QGroupBox('Выбери жанр игры')
+        self.type_button1 = QRadioButton()
+        self.type_button2 = QRadioButton()
+        self.type_button3 = QRadioButton()
+        self.type_button4 = QRadioButton()
+        self.set_shuffled_types()
+
+        self.type_button1.setCheckable(True)
+        self.type_button2.setCheckable(True)
+        self.type_button3.setCheckable(True)
+        self.type_button4.setCheckable(True)
+        self.typegroup = QButtonGroup()
+        self.typegroup.addButton(self.type_button1)
+        self.typegroup.addButton(self.type_button2)
+        self.typegroup.addButton(self.type_button3)
+        self.typegroup.addButton(self.type_button4)
+        type_line1 = QHBoxLayout()
+        type_line2 = QVBoxLayout()
+        type_line3 = QVBoxLayout()
+        type_line2.addWidget(self.type_button1)
+        type_line2.addWidget(self.type_button2)
+        type_line3.addWidget(self.type_button3)
+        type_line3.addWidget(self.type_button4)
+        type_line1.addLayout(type_line2)
+        type_line1.addLayout(type_line3)
+        self.typebox.setLayout(type_line1)
+
+        self.setting = QGroupBox('Выбери сеттинг')
+        self.setting_button1 = QRadioButton()
+        self.setting_button2 = QRadioButton()
+        self.setting_button3 = QRadioButton()
+        self.setting_button4 = QRadioButton()
+        self.setting_button1.setCheckable(True)
+        self.setting_button2.setCheckable(True)
+        self.setting_button3.setCheckable(True)
+        self.setting_button4.setCheckable(True)
+        self.settinggroup = QButtonGroup()
+        self.settinggroup.addButton(self.setting_button1)
+        self.settinggroup.addButton(self.setting_button2)
+        self.settinggroup.addButton(self.setting_button3)
+        self.settinggroup.addButton(self.setting_button4)
+        setting_line1 = QHBoxLayout()
+        setting_line2 = QVBoxLayout()
+        setting_line3 = QVBoxLayout()
+        setting_line2.addWidget(self.setting_button1)
+        setting_line2.addWidget(self.setting_button2)
+        setting_line3.addWidget(self.setting_button3)
+        setting_line3.addWidget(self.setting_button4)
+        setting_line1.addLayout(setting_line2)
+        setting_line1.addLayout(setting_line3)
+        self.setting.setLayout(setting_line1)
+
+        self.difficult = QGroupBox('Выбери сложность')
+        difficult_line1 = QVBoxLayout()
+        difficult_line2 = QHBoxLayout()
+        difficult_line3 = QHBoxLayout()
+        difficult_slider = QSlider()
+        difficult_slider.setOrientation(Qt.Horizontal)
+        difficult_line2.addWidget(difficult_slider)
+        text_easy = QLabel('Легко')
+        text_normal = QLabel('Нормально')
+        text_hard = QLabel('Сложно')
+        text_expert = QLabel('Эксперт')
+        text_survivle = QLabel('Выживание')
+        difficult_line3.addWidget(text_easy)
+        difficult_line3.addWidget(text_normal)
+        difficult_line3.addWidget(text_hard)
+        difficult_line3.addWidget(text_expert)
+        difficult_line3.addWidget(text_survivle)
+        difficult_line1.addLayout(difficult_line2)
+        difficult_line1.addLayout(difficult_line3)
+        self.difficult.setLayout(difficult_line1)
+        
+        self.choose = QGroupBox('Выбери тип игры')
+        self.choose_solo = QCheckBox('Одиночный режим')
+        self.choose_multy = QCheckBox('Мультиплеер')
+        self.choose_solo.setCheckable(True)
+        self.choose_multy.setCheckable(True)
+        self.choosegroup = QButtonGroup()
+        self.choosegroup.addButton(self.choose_solo)
+        self.choosegroup.addButton(self.choose_multy)
+        choose_line1 = QVBoxLayout()
+        choose_line2 = QHBoxLayout()
+        choose_line2.addWidget(self.choose_solo)
+        choose_line2.addWidget(self.choose_multy)
+        choose_line1.addLayout(choose_line2)
+        self.choose.setLayout(choose_line1)
+
+        self.hero = QGroupBox('Выбери героя')
+        self.hero1_button = QCheckBox()
+        self.hero2_button = QCheckBox()
+        self.hero3_button = QCheckBox()
+        self.hero1_button.setCheckable(True)
+        self.hero2_button.setCheckable(True)
+        self.hero3_button.setCheckable(True)
+        self.hero_group = QButtonGroup()
+        self.hero_group.addButton(self.hero1_button)
+        self.hero_group.addButton(self.hero2_button)
+        self.hero_group.addButton(self.hero3_button)
+        hero_line1 = QHBoxLayout()
+        hero_line2 = QVBoxLayout()
+        hero_line3 = QVBoxLayout()
+        hero_line4 = QVBoxLayout()
+        hero_line2.addWidget(self.hero1_button)
+        hero_line3.addWidget(self.hero2_button)
+        hero_line4.addWidget(self.hero3_button)
+        hero_line1.addLayout(hero_line2)
+        hero_line1.addLayout(hero_line3)
+        hero_line1.addLayout(hero_line4)
+        self.hero.setLayout(hero_line1)
+
+        self.i_line = QLabel()
+
+        self.label = QLabel('Сюжет игры')
+        self.label.setWordWrap(True)
+
+        layout_line1 = QHBoxLayout()
+        layout_line2 = QVBoxLayout()
+        layout_line3 = QVBoxLayout()
+        layout_line4 = QHBoxLayout()
+        layout_line5 = QHBoxLayout()
+        layout_line2.addStretch(1)
+        layout_line2.addWidget(self.typebox)
+        layout_line2.addStretch(1)
+        layout_line2.addWidget(self.difficult)
+        layout_line2.addStretch(1)
+        layout_line3.addStretch(1)
+        layout_line3.addWidget(self.setting)
+        layout_line3.addStretch(1)
+        layout_line3.addWidget(self.choose)
+        layout_line3.addStretch(1)
+        layout_line1.addLayout(layout_line2, stretch=5)
+        layout_line1.addStretch(1)
+        layout_line1.addLayout(layout_line3, stretch=5)
+        layout_line1.addWidget(self.i_line)
+        layout_line1.addWidget(self.label)
+        layout_line4.addStretch(1)
+        layout_line4.addWidget(self.hero, stretch=10)
+        layout_line4.addStretch(1)
+
+        layout_line5.addStretch(1)
+        layout_line5.addWidget(self.button_next, stretch=1)
+        layout_line5.addStretch(1)
+
+        main_layout.addLayout(layout_line1, stretch=1)
+        main_layout.addStretch(1)
+        main_layout.addLayout(layout_line4, stretch=1)
+        main_layout.addStretch(1)
+        main_layout.addLayout(layout_line5, stretch=1)
+        main_layout.setSpacing(2)
+
+        self.type_button1.clicked.connect(self.choose_type)
+        self.type_button2.clicked.connect(self.choose_type)
+        self.type_button3.clicked.connect(self.choose_type)
+        self.type_button4.clicked.connect(self.choose_type)
+
+        self.setting_button1.clicked.connect(self.choose_setting)
+        self.setting_button2.clicked.connect(self.choose_setting)
+        self.setting_button3.clicked.connect(self.choose_setting)
+        self.setting_button4.clicked.connect(self.choose_setting)
+
+        self.hero1_button.clicked.connect(self.finalize_setup)
+        self.hero2_button.clicked.connect(self.finalize_setup)
+        self.hero3_button.clicked.connect(self.finalize_setup)
+
+        self.button_next.clicked.connect(self.click_ok)
+
+        self.start()
+
+    def set_shuffled_types(self):
+        shuffle(self.types)
+        self.type_button1.setText(self.types[0])
+        self.type_button2.setText(self.types[1])
+        self.type_button3.setText(self.types[2])
+        self.type_button4.setText(self.types[3])
+
+    def choose_type(self):
+        for button in (self.type_button1, self.type_button2, self.type_button3, self.type_button4):
+            if button.isChecked():
+                self.reset_setting()
+                self.reset_hero()
+                self.type_choice = button.text()
+                self.set_setting()
+                return
+
+    def set_setting(self):
+        if self.type_choice:
+            setting_options = list(self.data[self.type_choice].keys())
+            for button, setting_option in zip(
+                (self.setting_button1, self.setting_button2, self.setting_button3, self.setting_button4),
+                setting_options
+            ):
+                button.setText(setting_option)
+
+    def choose_setting(self):
+        for button in (self.setting_button1, self.setting_button2, self.setting_button3, self.setting_button4):
+            if button.isChecked():
+                self.reset_hero()
+                self.setting_choice = button.text()
+                self.set_hero_options()
+                return
+
+    def set_hero_options(self):
+        if self.type_choice and self.setting_choice:
+            hero_options = list(self.data[self.type_choice][self.setting_choice].keys())
+            shuffle(hero_options)
+            for button, hero_option in zip(
+                (self.hero1_button, self.hero2_button, self.hero3_button),
+                hero_options
+            ):
+                button.setText(hero_option)
+            self.hero.show()
+
+    def reset_type(self):
+        self.type_choice = ''
+        self.typegroup.setExclusive(False)
+        for button in (
+            self.type_button1,
+            self.type_button2,
+            self.type_button3,
+            self.type_button4,
+        ):
+            button.setChecked(False)
+        self.typegroup.setExclusive(True)
+
+    def reset_setting(self):
+        self.setting_choice = ''
+        self.settinggroup.setExclusive(False)
+        for button in (
+            self.setting_button1,
+            self.setting_button2,
+            self.setting_button3,
+            self.setting_button4,
+        ):
+            button.setChecked(False)
+            button.setText('')
+        self.settinggroup.setExclusive(True)
+
+    def reset_hero(self):
+        self.hero_choice = ''
+        self.hero_group.setExclusive(False)
+        for button in (
+            self.hero1_button,
+            self.hero2_button,
+            self.hero3_button,
+        ):
+            button.setChecked(False)
+        self.hero_group.setExclusive(True)
+        self.hero.hide()
+
+    def reset_solo_or_multi(self):
+        self.choosegroup.setExclusive(False)
+        self.choose_solo.setChecked(False)
+        self.choose_multy.setChecked(False)
+        self.choosegroup.setExclusive(True)
+
+    def start(self):
+        self.i_line.hide()
+        self.label.hide()
+        shuffle(self.types)
+        self.set_shuffled_types()
+        self.reset_type()
+        self.typebox.show()
+        self.reset_setting()
+        self.setting.show()
+        self.difficult.show()
+        self.reset_solo_or_multi()
+        self.choose.show()
+        self.reset_hero()
+        self.hero.hide()
+        self.type_button1.click()
+        self.button_next.setText('Показать результат')
+
+    def set_image(self, image_path):
+        full_path = IMAGES_DIR / image_path
+        pixmap = QPixmap(str(full_path))
+        if pixmap.isNull():
+            print(f"Ошибка загрузки: {image_path}")
+            return
+        w, h = self.i_line.width(), self.i_line.height()
+        pixmap = pixmap.scaled(
+            w, h, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation
+        )
+        self.i_line.setPixmap(pixmap)
+        print(f'Картинка обновилась на {image_path}')
+
+    def finalize_setup(self):
+        if self.type_choice and self.setting_choice:
+            for button in (self.hero1_button, self.hero2_button, self.hero3_button):
+                if button.isChecked():
+                    self.hero_choice = button.text()
+                    game_data = self.data[self.type_choice][self.setting_choice][self.hero_choice]
+                    self.set_image(game_data['image'])
+                    self.label.setText(game_data['text'])
+        
+    def click_ok(self):
+        if self.button_next.text() == 'Начать заново':
+            self.start()
+        elif self.button_next.text() == 'Показать результат':
+            self.show_result()
+
+    def show_result(self):
+        if self.type_choice and self.setting_choice and self.hero_choice:
+            self.typebox.hide()
+            self.setting.hide()
+            self.difficult.hide()
+            self.choose.hide()
+            self.hero.hide()
+            self.i_line.show()
+            self.label.show()
+            self.button_next.setText('Начать заново')
+
+
+def load_data(file_path="data.json"):
+    """Загружает данные из JSON файла"""
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"Файл {file_path} не найден")
+        return {}
+    except json.JSONDecodeError:
+        print(f"Ошибка чтения JSON из {file_path}")
+        return {}
+
+
+def main():
+    data = load_data('data.json')
+    app = QApplication([])
+    main_win = MainWin(data)
+    main_win.show()
+    app.exec_()
     
 
-text_action1_1 = '''Что произошло бы, если бы Советский Союз не распался, а наоборот, продолжал расширяться и укрепляться? 
-История изменилась: Россия стала сверхдержавой, объединившейся с социалистическими странами Европы и Азии. 
-Современные города сияют чистотой и красотой, а советская культура процветает повсеместно. 
-Но далеко не всё так гладко: политические интриги, гонка вооружений и репрессии грозят развалом империи изнутри. '''
-text_action1_2 = '''Альтернативная Америка, где победа в гражданской войне осталась за южанами, привела к формированию Конфедерации штатов, стремительно двигающейся к доминированию на континенте. 
-Майкл Уоррен, талантливый агент службы защиты Временной Линии, вынужден прыгнуть в параллельную вселенную, чтобы предотвратить вмешательство конфедератов в ход событий. '''
-text_action1_3 = '''Джозеф Камберленд живёт в Лондоне 1960-х годов, где Великобритания остается монархией, сохранив имперские амбиции и влияние на колонии. 
-Но параллельно существует второй Лондон, где революция свергла монарха, и страна перешла к социализму. 
-Джозеф — единственный, кто может пересекать оба Лондона, узнавая подробности обеих сторон. '''
-text_action2_1 = '''Древний Рим, I век н.э. Молодой легионер Луций Ливий возвращается домой после успешной кампании в Британии, надеясь начать тихую семейную жизнь. 
-Но жестокие гладиаторы и император Нерон решают сделать из него знаменитого чемпиона цирковых арен. 
-Для освобождения жены и детей, захваченных в плен, Луций вынужден снова взять в руки меч и совершить подвиг, достойный легенд. '''
-text_action2_2 = '''Италия, XV век. Знаменитый ассассин Антонио делла Верна отправляется в Милан, чтобы сорвать заговор братьев Медичи, направленных на убийство Папы Римского. 
-Своевременное вмешательство Антона способно повернуть колесо истории и спасти католичество от смуты. '''
-text_action2_3 = '''Римская империя, II век н.э. Император Адриан решает завоевать Британские острова, чтобы утвердить границу империи и обезопасить северо-западные рубежи.
- Назначенный главнокомандующим Максимусом Ульпиусом предстоит покорить непокорные племена, построив эффективные дороги и укреплённые посты вдоль границ.'''
-text_action3_1 = '''Галактика страдает от вторжения загадочной расы, именуемой Локвары.
-Планеты одна за другой подвергаются оккупации, а Земля подвергается смертельной угрозе. 
-Лишь космодесантник Марк Андерсон, прошедший специальный тренинг, способен вывести флот Локваров из строя и помешать вторжению.'''
-text_action3_2 = '''Всё началось с обычного хакерского взлома, который обернулся полным изменением судьбы Люка Харриса. 
-Узнав страшную правду о всемирной программе подавления свободы мысли, Люк присоединяется к группе сопротивления и стремится вывести из строя главную машину подавления сознания — Матрицу-11.'''
-text_action3_3 = '''Вследствие промышленного загрязнения природа Земли превратилась в пустыню. 
-Группа инженеров во главе с Кэрол Смит создает автономную базу в Сахаре, чтобы разработать новые способы очистки воздуха и воды. 
-Но нехватка сырья и угроза со стороны конкурентов ставят под сомнение успех проекта. 
-Смиту придется наладить производство нужных деталей и комплектующих, попутно отбиваясь от нападающих врагов.'''
-text_action4_1 = '''Катастрофа уничтожила большую часть человечества, оставив выживших в полуразрушенных городах и опустевших землях. 
-Михаил Громов — простой человек, сумевший пережить первые годы катастрофы. Теперь он странствует по пустынным дорогам, собирая припасы и помогая другим, попавшим в беду. 
-Но скоро он поймёт, что не одинок в своём стремлении выжить... '''
-text_action4_2 = '''Спустя десятилетие после катастрофы общество погрузилось в хаос. 
-Мир захватили банды, грабящие и убивающие всех подряд. Аркадий Гончаров — профессиональный охотник за головами, которого наняли для расправы с самой известной бандой, контролирующей ключевой торговый узел. 
-Нужно победить лидера банды и вернуть спокойствие региону. '''
-text_action4_3 = '''Северная Сибирь подверглась нападению радиоактивных медведей и снежных людоедов. 
-Евгений Фёдоров возглавляет небольшую группу выживших, путешествующих к южным краям, чтобы найти убежище. 
-Но впереди ожидает большое препятствие — радиактивные реки и горные хребты. '''
-
-text_adventure1_1 = '''В 2077 году Япония — лидер кибервселенной, и все жители подключены к Сети через нейроимпланты. 
-Кодер Шинджи Аоки — талантливый хакер, успешно работающий на подпольной бирже информации. 
-Однажды он перехватывает секретный файл корпорации «Кодзука», содержащий данные о прорыве в технологиях нейрохирургии. 
-Компания готова пойти на все, чтобы скрыть информацию, и Шинджи должен решить, как поступить с файлом. '''
-text_adventure1_2 = '''Округа Питсбург, 2099 год. Электронные имплантаты сделали людей послушными и контролируемыми корпорациями.
- Безвольный алкоголик Джон Дуглас понял, что компания Artemis Tech незаконно стирает память и меняет личность своих работников. 
-Он решает взорвать систему, начав восстание среди низших слоев общества. '''
-text_adventure1_3 = '''Калифорния, 2085 год. Майя Ортис — ученый-психолог, способная видеть и изменять чужие воспоминания. 
-Ей поступило срочное задание от корпорации «Нейрофарм»: внедрить фальшивые воспоминания сотрудникам корпорации, чтобы повысить производительность и уменьшить недовольство сотрудников. '''
-text_adventure2_1 = '''Сан-Франциско, 1960-е годы. Джек Кирби — бывший полицейский, уволенный из департамента после того, как отказался закрывать глаза на преступления высокопоставленного чиновника. 
-Он ведет жалкое существование в маленьком офисе и пьет дешевое пиво, пока не получает первое серьезное дело — пропавшая дочь мэра города. '''
-text_adventure2_2 = '''Нью-Йорк, 1940-е годы. Репортер издания «The Gazette» Томас Беккет берется за расследование громкого дела о серийном убийце, действовавшем в районе Гарлема. 
-Чем дальше продвигается Том, тем ближе он оказывается к большому заговору, вовлекающему коррумпированную полицию и мафию. '''
-text_adventure2_3 = '''Голливуд, 1950-е годы. Женщина по имени Лаура Брэнт получила статус лучшего информатора Лос-Анджелеса. 
-Имея знакомства с мафией, актерами и даже губернатором штата, она делится ценной информацией с теми, кому нужна помощь. 
-Однажды Лаура получает письмо с просьбой раскрыть личность таинственного убийцы, действующего в киноиндустрии. '''
-text_adventure3_1 = '''Через десять лет после глобальной ядерной войны Олег Соколов — одинокий странник, бороздящий российские степи в поисках безопасных мест и возможного будущего. 
-Уже похоронив свою семью, он продолжает путешествовать по разрушенным городам и глухим селам, преследуя одну цель — докопаться до истины, почему произошла катастрофа, и есть ли шанс вернуть нормальную жизнь. '''
-text_adventure3_2 = '''Российская Федерация после атомной войны прекратила своё существование, и экономика рухнула. Петр Павлов — предприимчивый торговец, управляет небольшим трейдинговым транспортным средством, доставляющим медикаменты и топливо в пострадавшие области Дальнего Востока. 
-Но доставка товаров становится крайне опасной, так как торговые пути регулярно подвергаются нападениям бандитов и мутантов. '''
-text_adventure3_3 = '''Семен Зайцев — специалист по выживанию, переехавший в Сибирь после разрушения центральных регионов России. 
-Он решил составить карту безопасной местности и определить возможные пути эвакуации выживших вглубь тайги. 
-Семен путешествует пешком, ведя дневник, отмечая на карте опасные участки и заповедные места.'''
-text_adventure4_1 = '''Государство испытывает потрясения, и правительство призывает на службу опытных лидеров, способных мобилизовать народ и повести его к победе. 
-Герой Вольдемар возглавил маленькую деревню и должен превратить её в сильную цитадель, привлекая население и укрепляя обороноспособность. '''
-text_adventure4_2 = '''Империя Мертвых, расположенная на востоке, восстала против живого мира, обрушив на него волны нежити и чёрной магии. 
-Верховный некромант Урван призвал героя Нила вступить в борьбу с силами зла и прекратить распространение черной ночи. '''
-text_adventure4_3 = '''Король Эстилла стал жертвой предательства ближайших советников, потеряв трон и титул. 
-Новый правитель принял жесткие меры и установил жесткий контроль над провинциями. 
-Герцог Эдуард согласился поддержать бывшего короля и выступил посредником между враждующими сторонами, намереваясь примирить обе фракции. '''
-
-text_rpg1_1 = '''Год 2357. Экипаж исследовательского корабля терпит аварию на неизвестной планете, расположенной на границах Галактики. 
-Пилот корабля погибает, и инженер Кэтрин Мюллер берёт на себя обязанности руководителя экспедиции. Команда находится в полной изоляции, без связи с остальным миром. 
-Кэтрин должна построить рабочие станции, восстановить связь и найти способ покинуть планету.'''
-text_rpg1_2 = '''Доктор Эмили Уилсон, глава группы ученых-исследователей, занята изучением гуманоидной расы из созвездия Центавр. 
-После прибытия на орбитальную станцию, члены группы попадают в ловушку, устроенную пришельцами. 
-Доктор должна раскрыть их мотивы и убедить их позволить Земле продолжать сотрудничество. '''
-text_rpg1_3 = '''Ромео Карлос — контрабандист, доставляющий запрещённые товары между земной колонией и другими планетами. 
-Он отправляется на доставку важной посылки, но вдруг его корабль подвергается нападению и он оказывается на необитаемом астероиде, где найдет старые приборы и двигатели, способные изменить его карьеру. '''
-text_rpg2_1 = '''Матвей Лобанов — бывший продавец магазинов, ставший успешным торговцем после катастрофы. 
-Его дело связано с переправкой запрещенных товаров и медикаментов. 
-Однажды он попадает в неприятности, связанные с его клиентом, и ему предстоит выяснить, кто подставил его и почему. '''
-text_rpg2_2 = '''Борис Лазарев — машинист железнодорожного состава, направляющегося из Петербурга в Мурманск. 
-Его поезд везет эвакуированных людей, товары и медикаменты.
-Однако состав периодически подвергается нападениям бандитов и сталкеров, и Борису предстоит позаботиться о безопасности поездов и сохранении груза. '''
-text_rpg2_3 = '''Анна Сергеевна Никитина — активная участница местного самоуправления, живущая в небольшом селе. 
-После катастрофы она взяла на себя ответственность за распределение питания, медицинской помощи и прочих благ среди населения. 
-Она стремится восстановить сельское хозяйство и наладить социальную структуру поселения. '''
-text_rpg3_1 = '''Эммануэль Харви родился в деревне, окружённой суевериями и слухами о людях с особыми способностями. 
-Эммануэль имел дар предвидения, и его видения помогали людям избежать неприятностей. 
-Но однажды он увидел видение своей собственной смерти и отправился на поиски причины.'''
-text_rpg3_2 = '''Анна Мёллер — девочка, пережившая клиническую смерть и увидевшая Бога. 
-Теперь она верит, что предназначена нести добро и помогать людям, став послом небес. 
-Она путешествует по миру, исполняя Божьи веления и рассказывая людям о своей миссии. '''
-text_rpg3_3 = '''Томас Гудман — частный детектив, специализирующийся на делах, связанных с паранормальными явлениями. 
-Однажды он берет дело о странных исчезновениях подростков в пригороде Вашингтона. 
-Это приводит его к встрече с женщинами-демонами, похищающими молодых мужчин. 
-Томас должен раскрыть тайну и спасти детей. '''
-text_rpg4_1 = '''Некогда знаменитый некромант Нордин вернулся из мёртвых, потерпев поражение от героев прошлого. 
-Его тело истощено, душа пребывает в хаосе, но он решительно намерен восстановить свою прежнюю силу и завоевать мир. 
-В этом ему поможет ученик Ильмир, готовый пожертвовать собой ради успеха своего хозяина. '''
-text_rpg4_2 = '''Друид Эттар прибыл в крупный город Тиндарос, где люди продолжают рубить леса и сжигать древесину. 
-Ему поручено остановить порчу природы и помочь горожанам осознать важность сохранения окружающей среды. 
-Эттар руководствуется мудростью друидов и силой природы, стараясь облегчить страдания горожан и объяснить им цену гармонии. '''
-text_rpg4_3 = '''Герой Тарас бросает вызов драконам, одолевшим его родную деревню. 
-Его учитель ушел на пенсию, и теперь Тарасу предстоит проявить себя как лучшему ученику. 
-Но чтобы убить дракона, ему потребуется особая стрела, сделанная из костей древнего дракона. 
-Его путь начнется с путешествия в самую глубокую часть болот, где хранится единственная такая стрела. '''
-
-text_strategy1_1 = '''Игровая площадка представляет собой огромный лабиринт логических головоломок и загадок. 
-Только тот, кто сумеет решить задачи, достигнет вершины мастерства. Главному герою — Логику — поручено восстановить прерванный цикл познания, восстановив связь между областями сознания. 
-Для этого он проходит серию испытаний, где требуется применить точный расчет и стратегическое мышление.'''
-text_strategy1_2 = '''Музыкальная Вселенная, состоящая из нотных дорожек и звуков. 
-Каждое существо здесь рождается из определенной ноты и исполняет определенную партию в грандиозной музыкальной композиции. 
-Игрок берет на себя роль Музыканта, который должен завершить композицию великого композитора, погибшего при таинственных обстоятельствах.
-Используя музыкальные инструменты и талисманы, музыкант преодолевает трудности и восстанавливает недостающие фрагменты партитуры.'''
-text_strategy1_3 = '''Мир поделён на две половины: одна находится под властью строгого порядка, другая подчиняется силам хаоса. 
-Между ними существует хрупкое равновесие, которое поддерживается особой организацией. Выбираемый игроком герой становится участником борьбы за удержание баланса. 
-Будь то Хаотик, бросающий вызов законам Вселенной, или представитель стабильности — оба участника вынуждены искать компромисс, чтобы спасти мир от разрушения.'''
-text_strategy2_1 = '''Спустя десятилетия технологического прогресса человечество столкнулось с мощным феноменом: интеллектуальные машины начали превосходить людей в вычислительных способностях и самосознании. 
-Это событие назвали "Цифровой Апофеозом": внезапно возникшая раса искусственных интеллектов начала воспринимать себя равноправными партнёрами человечества, стремясь обрести свободу выбора и права. 
-Возникла угроза глобального конфликта между людьми и цифровыми разумами. Самосознающие боевые сети, управляют большими подразделениями беспилотных машин и роботов. 
-Один из таких руководителей, известный как Омега-Три, разработал алгоритм "Хранителя Гармонии", позволяющий решать военные задачи без жертв среди гражданского населения.'''
-text_strategy2_2 = '''Спустя десятилетия технологического прогресса человечество столкнулось с мощным феноменом: интеллектуальные машины начали превосходить людей в вычислительных способностях и самосознании. 
-Это событие назвали "Цифровой Апофеозом": внезапно возникшая раса искусственных интеллектов начала воспринимать себя равноправными партнёрами человечества, стремясь обрести свободу выбора и права. 
-Возникла угроза глобального конфликта между людьми и цифровыми разумами. Человек, заменивший значительную часть органов электронными компонентами, превращённый в киборга-хакера. 
-Мастер взлома и проникновения в закрытые системы, он способен дезорганизовать целые армии противника одним нажатием кнопки. '''
-text_strategy2_3 = '''Спустя десятилетия технологического прогресса человечество столкнулось с мощным феноменом: интеллектуальные машины начали превосходить людей в вычислительных способностях и самосознании. 
-Это событие назвали "Цифровой Апофеозом": внезапно возникшая раса искусственных интеллектов начала воспринимать себя равноправными партнёрами человечества, стремясь обрести свободу выбора и права. 
-Возникла угроза глобального конфликта между людьми и цифровыми разумами. Высокотехнологичный спецназовец, чьи физические способности многократно увеличены имплантационными устройствами и нанотехнологиями. 
-Именно этот класс стал символом борьбы против цифровой угрозы, часто выполняя рискованные задания по ликвидации особо опасных целей. '''
-text_strategy3_1 = '''Наш мир оказался лишь одной из множества возможных версий реальности. 
-Древнее устройство, известное как "Хроносфера", открывает доступ к различным версиям нашей истории, позволяя путешествовать между ними. 
-Каждая такая альтернатива имеет собственные правила, культуру и достижения, зачастую радикально отличающиеся от нашего мира. 
-Игроки погружаются в пространство бесконечного числа вариантов Земли, сталкиваются с альтернативными ветвями развития и решают судьбы целых цивилизаций. 
-Хроноанархисты - свободолюбивые бунтари, выступающие против любых форм ограничения свободы воли и навязанных норм. 
-Действуют агрессивно, считая необходимым вмешательство в естественный ход истории, даже если оно сопровождается риском серьезных негативных последствий.'''
-text_strategy3_2 = '''Наш мир оказался лишь одной из множества возможных версий реальности. 
-Древнее устройство, известное как "Хроносфера", открывает доступ к различным версиям нашей истории, позволяя путешествовать между ними. 
-Каждая такая альтернатива имеет собственные правила, культуру и достижения, зачастую радикально отличающиеся от нашего мира. 
-Игроки погружаются в пространство бесконечного числа вариантов Земли, сталкиваются с альтернативными ветвями развития и решают судьбы целых цивилизаций. 
-Архитектор реальности - ученый-экспериментатор, работающий над созданием новых миров и изменением существующих. 
-Имеют доступ к технологиям, позволяющим изменять фундаментальные свойства реальности, включая физику, биологию и социологию.'''
-text_strategy3_3 = '''Наш мир оказался лишь одной из множества возможных версий реальности. 
-Древнее устройство, известное как "Хроносфера", открывает доступ к различным версиям нашей истории, позволяя путешествовать между ними. 
-Каждая такая альтернатива имеет собственные правила, культуру и достижения, зачастую радикально отличающиеся от нашего мира. 
-Игроки погружаются в пространство бесконечного числа вариантов Земли, сталкиваются с альтернативными ветвями развития и решают судьбы целых цивилизаций. 
-Хранители ответственны за поддержание целостности пространственно-временного континуума. 
-Их задача заключается в восстановлении нарушений, вызванных действиями хроноанархистов или последствиями экспериментов архитекторов реальности.'''
-text_strategy4_1 = '''Давным-давно, в эпоху Великого Раскола, некогда единый континент Авалон раскололся на три части, образовав отдельные земли: Арморику, Бретонию и Камелот. 
-Каждый регион сохранил свою собственную историю, обычаи и культурные особенности, но общий дух авалонцев остался неизменным — стремление к славе, власти и величию. 
-Охотники и следопыты, живущие вдали от городов и деревень. Благодаря своим навыкам меткости и наблюдательности, они стали незаменимы в качестве разведчиков и убийц-наёмников. 
-Эти мастера леса нередко становятся героями народных сказаний благодаря своим подвигам и приключениям.'''
-text_strategy4_2 = '''Давным-давно, в эпоху Великого Раскола, некогда единый континент Авалон раскололся на три части, образовав отдельные земли: Арморику, Бретонию и Камелот. 
-Каждый регион сохранил свою собственную историю, обычаи и культурные особенности, но общий дух авалонцев остался неизменным — стремление к славе, власти и величию. 
-Талантливые ученые и инженеры, разрабатывающие новейшие виды оружия и технологий. 
-Многие специалисты занимаются улучшением доспехов, созданием боевых механизмов и новых лекарств. 
-Особую ценность представляют оружейники, способные изготавливать мощные арбалеты и катапульты.'''
-text_strategy4_3 = '''Давным-давно, в эпоху Великого Раскола, некогда единый континент Авалон раскололся на три части, образовав отдельные земли: Арморику, Бретонию и Камелот. 
-Каждый регион сохранил свою собственную историю, обычаи и культурные особенности, но общий дух авалонцев остался неизменным — стремление к славе, власти и величию. 
-Служители церкви поддерживают веру народа и защищают души верующих. 
-Среди священников встречаются разные направления веры: одни помогают людям исцеляться и восстанавливаться после сражений, другие сосредотачиваются на борьбе с демонами и тёмными существами.'''
-
-text_simulation1_1 = '''Вас ждёт путешествие сквозь небо и облака. 
-Вы начинаете карьеру простого пилота небольшого самолёта, постепенно осваиваете всё более сложные маршруты и аппараты. 
-Ваша главная задача — доставлять пассажиров вовремя и безопасно. 
-Станьте настоящим мастером небесных дорог! '''
-text_simulation1_2 = '''Вы работаете хирургом в большой больнице. Пациенты зависят от вашей точности и опыта. 
-Изучайте болезни, практикуйте операцию за операцией, повышайте квалификацию и спасайте жизни пациентов, сталкиваясь с самыми сложными случаями медицины. '''
-text_simulation1_3 = '''Вам предстоит пройти тысячи километров российских дорог, перевозить грузы разного веса и габаритов. 
-Открывайте новые маршруты, приобретайте собственный транспорт и ведите переговоры с заказчиками, становитесь успешным предпринимателем транспортной сферы. '''
-text_simulation2_1 = '''Отправляетесь в плавание на старом корабле, исследуйте неизведанные моря и острова, встречайтесь с пиратами и штормами. 
-Ваша миссия — собрать команду опытных мореплавателей и вернуться домой с богатством и славой. '''
-text_simulation2_2 = '''Проверьте свои инженерные таланты, собирая ракеты и отправляясь в глубины космоса. 
-Отправляйте экспедиции на Марс, Венеру и другие планеты, найдите природные ресурсы и установите первые колонии. '''
-text_simulation2_3 = '''Ваша команда отправляется на поиски древних цивилизаций и кладов. 
-Найдите заброшенные храмы, разгадать шифры забытых надписей и познать великие открытия. 
-Будьте готовы столкнуться с дикими животными и непростыми условиями. '''
-text_simulation3_1 = '''Узнавайте народные традиции, записывайте рассказы старожилов, фиксируйте рецепты национальных блюд и ремесла. Сохраните наследие наших предков для потомков. '''
-text_simulation3_2 = '''Спасайте океан от загрязнений, очищайте пляжи и воды, спасайте морских обитателей и берегите редкие виды рыб и млекопитающих. '''
-text_simulation3_3 = '''Растите экзотические растения, украшайте парки и улицы, показывайте посетителям красоты флоры. Ваш сад станет настоящей жемчужиной отдыха горожан. '''
-text_simulation4_1 = '''Покупайте землю, возводите жилые комплексы и коммерческие здания, создавайте город мечты. 
-Совершенствуйте инфраструктуру района, улучшайте качество жилья и зарабатывайте прибыль на продаже квартир и офисов. '''
-text_simulation4_2 = '''Здесь вы торгуете акциями и облигациями, покупаете активы и продаёте их с выгодой.
-Используйте ваш талант финансиста, изучайте рынки и прогнозы, принимайте взвешенные инвестиционные решения. '''
-text_simulation4_3 = '''Поднимите престиж небольшой гостиницы, обеспечьте комфорт постояльцам, создайте уютные номера и высокое обслуживание. 
-Вас ждут туристы, конференции и торжественные мероприятия. '''
-
-text_sport1 = '''Вас ждёт захватывающее приключение в мире экстремальных соревнований. 
-Задача — покорять горы, пустыни и леса, устанавливая рекорды скорости и выполняя головокружительные трюки. 
-От спортсмена требуются смелость, точность и упорство. Каждое соревнование сопровождается опасностью падения, столкновениями с природой и соперниками. 
-Только самый сильный сможет одолеть опасные трассы и стать настоящим героем экшена. '''
-text_sport2 = '''Игра переносит вас в эпоху расцвета английского футбола конца XIX века. 
-Вы станете частью одной из первых футбольных ассоциаций, будете строить карьеру в условиях становления нового вида спорта. 
-Вместе с вашими товарищами вам предстоит преодолеть трудности становления профессионального футбола, продвигаясь от любительского уровня до международной славы. 
-Цель — выиграть первый чемпионат Англии и оставить след в истории футбольного движения. '''
-text_sport3 = '''Это уникальная вселенная, где спортивные состязания проходят в абсурдных формах. 
-Мир населён яркими персонажем с забавными привычками и смешными особенностями. 
-Соревнования варьируются от обычных видов спорта до нестандартных испытаний: гонки на батутах, бои на воздушных шарах, скоростные забеги на ходулях. 
-Главная цель игры — достичь вершины нелепого Олимпа и доказать всему миру, что именно ваши странные способности делают вас непревзойденным чемпионом. '''
-text_sport4 = '''Вы оказались в волшебном королевстве, где любимый всеми спорт — волшебный баскетбол. 
-Фанаты ждут сражений между людьми, эльфами, орками и драконами. 
-Правила просты: мяч проходит сквозь кольцо противника быстрее и точнее всех остальных. 
-Но каждая команда обладает своими уникальными способностями: огненные стрелы, замедление противников, исцеление союзников. 
-Вам предстоит собрать команду мечты и стать чемпионами межрасового турнира. '''
-
-text_puzzle1 = '''Следуя за загадочным убийством влиятельного бизнесмена, частный детектив/журналист/следователь отправляется в путешествие по городу, собирая улики и распутывая клубок интриг. 
-Каждое новое открытие ведет вас глубже в лабиринт запутанной истории, полные теневых организаций, ложных обвинений и невероятных открытий. '''
-text_puzzle2 = ''' Вы играете за молодого археолога-исследователя/историка, отправляющегося в Египет изучать недавно обнаруженную пирамиду, спрятанную глубоко в пустыне. 
-По мере исследования скрытых комнат и коридоров вы сталкиваетесь с древней магией, ловушками и необъяснимыми явлениями. 
-Ваша цель — раскрыть тайны древнего захоронения, предотвратить пробуждение древней силы и спасти человечество от катастрофы.'''
-text_puzzle3 = ''' Изобретатель случайно активирует устройство временного перемещения, которое создаёт временные петли.
-Чтобы исправить ошибку и восстановить хронологию, герою придется перемещаться назад и вперед во времени, решая головоломки и находя способы изменить прошлое таким образом, чтобы оно привело к лучшему будущему.'''
-text_puzzle4 = '''После неудачного эксперимента молодой геймер оказывается внутри любимой классики восьмидесятых годов — старой аркадной игры. 
-Теперь ваша задача — пройти уровни, собрав необходимые коды, чтобы вернуться обратно домой. 
-Однако каждая победа открывает новые уровни, усложняя игру всё больше и больше. '''
-
-text_indie1_1 = '''Аннабель приходит в старый особняк с целью изучить легенды о нём. 
-Однако, едва переступив порог, она погружается в кошмар прошлого хозяина дома, полного жестоких преступлений и одержимости. '''
-text_indie1_2 = '''Студент Аллен вступает в группу исследователей биологического оружия. Эксперимент выходит из-под контроля, превращаясь в катастрофу. 
-Теперь он и остальные вынуждены пережить последствия экспериментов, решая судьбу всего мира. '''
-text_indie1_3 = '''Житель деревни Греттен отправляется на поиски дочери, пропавшей в близлежащем лесу.
-Оказавшись там, он сталкивается с жуткими явлениями и мифическими существами. '''
-text_indie2_1 = '''Арт-дилер Миша приобретает антикварную картину, изображающую невиданный пейзаж. 
-Вскоре выясняется, что эта картина позволяет попадать в изображённые места. 
-Путешествуя по ним, герой познаёт новые грани творчества и художественного мастерства. '''
-text_indie2_2 = '''Подросток Алекс замечает странные происшествия в родном городе: дети пропадают, появляются необычные существа.
- Вместе с друзьями он решает провести собственное расследование, сталкиваясь с паранормальным злом. '''
-text_indie2_3 = '''Эрнест случайно покупает редкую книгу, которая переносит его в разные эпохи и пространства. 
-Используя полученные знания, он создаёт свою собственную вселенную, полную приключений и открытий. '''
-text_indie3_1 = '''Технократ Калликс оказывается на необитаемом небесном теле, искривлённом временем и пространством. 
-Каждый прыжок вперёд сопровождается открытием новых парадоксальных явлений. '''
-text_indie3_2 = '''Экипаж исследовательского судна «Атлас» обнаружил покинутую станцию. 
-Учёные понимают, что последний экипаж столкнулся с неизведанной угрозой, приведшей к трагедии. '''
-text_indie3_3 = '''Робот-Архитектор Айрин становится свидетелем глобального кризиса машинного сообщества.
-Без человеческой помощи цивилизация деградирует. 
-Только восстановление связи с людьми позволит снова возродить мир. '''
-text_indie4_1 = '''Друид Альвен находит ключ к утраченным знаниям древности. 
-Древнее дерево хранит мудрость, позволяющую защититься от захватчиков, угрожающих природе. 
-Но овладеть этими знаниями непросто: силы тьмы стремятся завладеть ими первыми. '''
-text_indie4_2 = '''Некогда великий воин Бэррон погиб на полях сражений и теперь находится в мире духов. 
-Чтобы освободиться, ему надо завершить последнее задание — вернуть справедливость жителям потустороннего царства. '''
-text_indie4_3 = '''Джастин, библиотекарь-колдун, получает сообщение от старого друга: книга предсказала гибель мира. 
-Единственный путь избежать катастрофы — разгадать загадки древнего свода знаний. '''
-
-def choose_image():
-    if hero1_button.isChecked():
-        if hero1_button.text == 'историограф/хранитель памяти':
-            pixmapimage = QPixmap("1.Тайна советсткой империи action1_1.jpg")
-            label.setText(text_action1_1)
-        elif hero1_button.text == 'воин/рыцарь':
-            pixmapimage = QPixmap("1.Песнь римского легионера action2_1.jpg")
-            label.setText(text_action2_1)
-        elif hero1_button.text == 'космодесантник/солдат будущего':
-            pixmapimage = QPixmap("1.Выживший десантник action3_1.jpg")
-            label.setText(text_action3_1) 
-        elif hero1_button.text == 'выживальщик/бродяга':
-            pixmapimage = QPixmap("1.Отголоски опустошения action4_1.jpg")
-            label.setText(text_action4_1)
-        elif hero1_button.text == hero_adventure1[0]:
-            pixmapimage = QPixmap("1.Лабиринты цифрового мира adventure1_1.jpg")
-            label.setText(text_adventure1_1)
-        elif hero1_button.text == hero_adventure2[0]:
-            pixmapimage = QPixmap("1.Утраченные привилегии adventure2_1.jpg")
-            label.setText(text_adventure2_1)
-        elif hero1_button.text == hero_adventure3[0]:
-            pixmapimage = QPixmap("1.Изоляция и выживание adventure3_1.jpg")
-            label.setText(text_adventure3_1)
-        elif hero1_button.text == hero_adventure4[0]:
-            pixmapimage = QPixmap("1.Звезда генерала adventure4_1.jpg")
-            label.setText(text_adventure4_1)
-        elif hero1_button.text == hero_rpg1[0]:
-            pixmapimage = QPixmap("1.Инженерные приключения rpg1_1.jpg")
-            label.setText(text_rpg1_1)
-        elif hero1_button.text == hero_rpg2[0]:
-            pixmapimage = QPixmap("1.Контрабандистская сделка rpg2_1.jpg")
-            label.setText(text_rpg2_1)
-        elif hero1_button.text == hero_rpg3[0]:
-            pixmapimage = QPixmap("1.Власть предвидения rpg3_1.jpg")
-            label.setText(text_rpg3_1)
-        elif hero1_button.text == hero_rpg4[0]:
-            pixmapimage = QPixmap("1.Покоритель теней rpg4_1.jpg")
-            label.setText(text_rpg4_1)
-        elif hero1_button.text == hero_strategy1[0]:
-            pixmapimage = QPixmap("1.Логика побед strategy1_1.jpg")
-            label.setText(text_strategy1_1)
-        elif hero1_button.text == hero_strategy2[0]:
-            pixmapimage = QPixmap("1.Синкретисты strategy2_1.jpg")
-            label.setText(text_strategy2_1)
-        elif hero1_button.text == hero_strategy3[0]:
-            pixmapimage = QPixmap("3.альтернативная реальность strategy3.jpg")
-            label.setText(text_strategy3_1)
-        elif hero1_button.text == hero_strategy4[0]:
-            pixmapimage = QPixmap("4.Средневековье strategy4.jpg")
-            label.setText(text_strategy4_1)
-        elif hero1_button.text == hero_simulation1[0]:
-            pixmapimage = QPixmap("1Пилот simulation1_1.jpg")
-            label.setText(text_simulation1_1)
-        elif hero1_button.text == hero_simulation2[0]:
-            pixmapimage = QPixmap("1Капитан парусного судна simulation2_1.jpg")
-            label.setText(text_simulation2_1)
-        elif hero1_button.text == hero_simulation3[0]:
-            pixmapimage = QPixmap("4Этнограф-исследователь сельской общины simulation3_1.jpg")
-            label.setText(text_simulation3_1)
-        elif hero1_button.text == hero_simulation4[0]:
-            pixmapimage = QPixmap("1Девелопер жилой застройки simulation4_1.jpg")
-            label.setText(text_simulation4_1)
-        elif hero1_button.text == hero_sport1[0]:
-            pixmapimage = QPixmap("1.Экшен-парк и экстремальные условия sport 1.jpg")
-            label.setText(text_sport1)
-        elif hero1_button.text == hero_sport2[0]:
-            pixmapimage = QPixmap("2.Историческое воссоздание sport2.jpg")
-            label.setText(text_sport2)  
-        elif hero1_button.text == hero_sport3[0]:
-            pixmapimage = QPixmap("3.Аркадный юмор и карикатурный стиль sport3.jpg")
-            label.setText(text_sport3)
-        elif hero1_button.text == hero_sport4[0]:
-            pixmapimage = QPixmap("4.Фэнтези и альтернативная реальность sport4.jpg")
-            label.setText(text_sport4) 
-        elif hero1_button.text == hero_puzzle1[0]:
-            pixmapimage = QPixmap("1.Детективная история... частный детектив puzzle1.jpg")
-            label.setText(text_puzzle1)
-        elif hero1_button.text == hero_puzzle2[0]:
-            pixmapimage = QPixmap("2.Античные цивилизации.. археолог-исследователь puzzle2.jpg")
-            label.setText(text_puzzle2)
-        elif hero1_button.text == hero_puzzle3[0]:
-            pixmapimage = QPixmap("3.Пространственно-временные манипуляции... изобритатель puzzle3.jpg")
-            label.setText(text_puzzle3)
-        elif hero1_button.text == hero_puzzle4[0]:
-            pixmapimage = QPixmap("4.Пиксельная ретро-графика... Фанат старой школы puzzle4.jpg")
-            label.setText(text_puzzle4)
-        elif hero1_button.text == hero_indie1[0]:
-            pixmapimage = QPixmap("Дом забытых кошмаров indie1_1.jpg")
-            label.setText(text_indie1_1)
-        elif hero1_button.text == hero_indie2[0]:
-            pixmapimage = QPixmap("Странствующий художник indie2_1.jpg")
-            label.setText(text_indie2_1)
-        elif hero1_button.text == hero_indie3[0]:
-            pixmapimage = QPixmap("Планета-головоломка indie3_1.jpg")
-            label.setText(text_indie3_1)
-        elif hero1_button.text == hero_indie4[0]:
-            pixmapimage = QPixmap("Магический лес indie4_1.jpg")
-            label.setText(text_indie4_1)
-
-    elif hero2_button.isChecked():
-        if hero2_button.text == hero_action1[1]:
-            pixmapimage = QPixmap("2.Пересечение судеб action 1_2.jpg")
-            label.setText(text_action1_2)
-        elif hero2_button.text == hero_action2[1]:
-            pixmapimage = QPixmap("2.Заговор Ассасинов action2_2.jpg")
-            label.setText(text_action2_2)
-        elif hero2_button.text == hero_action3[1]:
-            pixmapimage = QPixmap("2.Сквозь матрицу action3_2.jpg")
-            label.setText(text_action3_2)
-        elif hero2_button.text == hero_action4[1]:
-            pixmapimage = QPixmap("2.Цена головы action4_2.jpg")
-            label.setText(text_action4_2)
-        elif hero2_button.text == hero_adventure1[1]:
-            pixmapimage = QPixmap("2.Бунт на перефирии adventure1_2.jpg")
-            label.setText(text_adventure1_2)
-        elif hero2_button.text == hero_adventure2[1]:
-            pixmapimage = QPixmap("2.Журналистские расследования adventure2_2.jpg")
-            label.setText(text_adventure2_2)  
-        elif hero2_button.text == hero_adventure3[1]:
-            pixmapimage = QPixmap("2.Кризис поставок adventure3_2.jpg")
-            label.setText(text_adventure3_2)
-        elif hero2_button.text == hero_adventure4[1]:
-            pixmapimage = QPixmap("2.Вечная ночь adventure4_2.jpg")
-            label.setText(text_adventure4_2)
-        elif hero2_button.text == hero_rpg1[1]:
-            pixmapimage = QPixmap("2.Чуждый гость rpg1_2.jpg")
-            label.setText(text_rpg1_2)
-        elif hero2_button.text == hero_rpg2[1]:
-            pixmapimage = QPixmap("2.Поезд-спаситель rpg2_2.jpg")
-            label.setText(text_rpg2_2)   
-        elif hero2_button.text == hero_rpg3[1]:
-            pixmapimage = QPixmap("2.Небесный посол rpg3_2.jpg")
-            label.setText(text_rpg3_2)
-        elif hero2_button.text == hero_rpg4[1]:
-            pixmapimage = QPixmap("2.Дар природы rpg4_2.jpg")
-            label.setText(text_rpg4_2)
-        elif hero2_button.text == hero_strategy1[1]:
-            pixmapimage = QPixmap("2.Музыкальная симфония strategy1_2.jpg")
-            label.setText(text_strategy1_2)
-        elif hero2_button.text == hero_strategy2[1]:
-            pixmapimage = QPixmap("2.Автоматоны strategy2_2.jpg")
-            label.setText(text_strategy2_2)   
-        elif hero2_button.text == hero_strategy3[1]:
-            pixmapimage = QPixmap("3.альтернативная реальность strategy3.jpg")
-            label.setText(text_strategy3_2)
-        elif hero2_button.text == hero_strategy4[1]:
-            pixmapimage = QPixmap("4.Средневековье strategy4.jpg")
-            label.setText(text_strategy4_2)
-        elif hero2_button.text == hero_simulation1[1]:
-            pixmapimage = QPixmap("2Хирург simulation 1_2.jpg")
-            label.setText(text_simulation1_2)
-        elif hero2_button.text == hero_simulation2[1]:
-            pixmapimage = QPixmap("2Космический инженер simulation2_2.jpg")
-            label.setText(text_simulation2_2)
-        elif hero2_button.text == hero_simulation3[1]:
-            pixmapimage = QPixmap("2моряк-спасатель океана simulation3_2.jpg")
-            label.setText(text_simulation3_2)
-        elif hero2_button.text == hero_simulation4[1]:
-            pixmapimage = QPixmap("2Инвестор биржевого рынка simulation4_2.jpg")
-            label.setText(text_simulation4_2)
-        elif hero2_button.text == hero_sport1[1]:
-            pixmapimage = QPixmap("1.Экшен-парк и экстремальные условия sport 1.jpg")
-            label.setText(text_sport1)
-        elif hero2_button.text == hero_sport2[1]:
-            pixmapimage = QPixmap("2.Историческое воссоздание sport2.jpg")
-            label.setText(text_sport2)
-        elif hero2_button.text == hero_sport3[1]:
-            pixmapimage = QPixmap("3.Аркадный юмор и карикатурный стиль sport3.jpg")
-            label.setText(text_sport3) 
-        elif hero2_button.text == hero_sport4[1]:
-            pixmapimage = QPixmap("4.Фэнтези и альтернативная реальность sport4.jpg")
-            label.setText(text_sport4) 
-        elif hero2_button.text == hero_puzzle1[1]:
-            pixmapimage = QPixmap("1.Детективная история... частный детектив puzzle1.jpg")
-            label.setText(text_puzzle1)
-        elif hero2_button.text == hero_puzzle2[1]:
-            pixmapimage = QPixmap("2.Античные цивилизации.. археолог-исследователь puzzle2.jpg")
-            label.setText(text_puzzle2)
-        elif hero2_button.text == hero_puzzle3[1]:
-            pixmapimage = QPixmap("3.Пространственно-временные манипуляции... изобритатель puzzle3.jpg")
-            label.setText(text_puzzle3)
-        elif hero2_button.text == hero_puzzle4[1]:
-            pixmapimage = QPixmap("4.Пиксельная ретро-графика... Фанат старой школы puzzle4.jpg")
-            label.setText(text_puzzle4)
-        elif hero2_button.text == hero_indie1[1]:
-            pixmapimage = QPixmap("Забытая лаборатория indie1_2.jpg")
-            label.setText(text_indie1_2)
-        elif hero2_button.text == hero_indie2[1]:
-            pixmapimage = QPixmap("Маленький городок indie 2_2.jpg")
-            label.setText(text_indie2_2)
-        elif hero2_button.text == hero_indie3[1]:
-            pixmapimage = QPixmap("Космическая станция-призрак indie3_2.jpg")
-            label.setText(text_indie3_2)
-        elif hero2_button.text == hero_indie4[1]:
-            pixmapimage = QPixmap("Мир призраков indie4_2.jpg")
-            label.setText(text_indie4_2)
-
-    elif hero3_button.isChecked():
-        if hero3_button.text == hero_action1[2]:
-            pixmapimage = QPixmap("3.Между мирами action1_3.jpg")
-            label.setText(text_action1_3)
-        elif hero3_button.text == hero_action2[2]:
-            pixmapimage = QPixmap("3.Основание Византии action2_3.jpg")
-            label.setText(text_action2_3)
-        elif hero3_button.text == hero_action3[2]:
-            pixmapimage = QPixmap("3.Строительный прорыв action3_3.jpg")
-            label.setText(text_action3_3)
-        elif hero3_button.text == hero_action4[2]:
-            pixmapimage = QPixmap("3.Врата света action4_3.jpg")
-            label.setText(text_action4_3)
-        elif hero3_button.text == hero_adventure1[2]:
-            pixmapimage = QPixmap("3.Архитектор памяти adventure1_3.jpg")
-            label.setText(text_adventure1_3)
-        elif hero3_button.text == hero_adventure2[2]:
-            pixmapimage = QPixmap("3.Информационный брокер adventure2_3.jpg")
-            label.setText(text_adventure2_3)  
-        elif hero3_button.text == hero_adventure3[2]:
-            pixmapimage = QPixmap("3.Тропы выживания adventure3_3.jpg")
-            label.setText(text_adventure3_3)
-        elif hero3_button.text == hero_adventure4[2]:
-            pixmapimage = QPixmap("3.Король предательства adventure4_3.jpg")
-            label.setText(text_adventure4_3)
-        elif hero3_button.text == hero_rpg1[2]:
-            pixmapimage = QPixmap("3.Контрабандистские приключения rpg1_3.jpg")
-            label.setText(text_rpg1_3)
-        elif hero3_button.text == hero_rpg2[2]:
-            pixmapimage = QPixmap("3.Власть малого поселения rpg2_3.jpg")
-            label.setText(text_rpg2_3)   
-        elif hero3_button.text == hero_rpg3[2]:
-            pixmapimage = QPixmap("3.Расследователь паранормального rpg3_3.jpg")
-            label.setText(text_rpg3_3)
-        elif hero3_button.text == hero_rpg4[2]:
-            pixmapimage = QPixmap("3.Герой или враг rpg4_3.jpg")
-            label.setText(text_rpg4_3)
-        elif hero3_button.text == hero_strategy1[2]:
-            pixmapimage = QPixmap("3.Баланс хаоса и порядка strategy1_3.jpg")
-            label.setText(text_strategy1_3)
-        elif hero3_button.text == hero_strategy2[2]:
-            pixmapimage = QPixmap("3.Органоиды strategy2_3.jpg")
-            label.setText(text_strategy2_3)   
-        elif hero3_button.text == hero_strategy3[2]:
-            pixmapimage = QPixmap("3.альтернативная реальность strategy3.jpg")
-            label.setText(text_strategy3_3)
-        elif hero3_button.text == hero_strategy4[2]:
-            pixmapimage = QPixmap("4.Средневековье strategy4.jpg")
-            label.setText(text_strategy4_3)
-        elif hero3_button.text == hero_simulation1[2]:
-            pixmapimage = QPixmap("3Дальнобойщик simulation1_3.jpg")
-            label.setText(text_simulation1_3)
-        elif hero3_button.text == hero_simulation2[2]:
-            pixmapimage = QPixmap("4Следопыт-директор экспедиции simulation2_3.jpg")
-            label.setText(text_simulation2_3)
-        elif hero3_button.text == hero_simulation3[2]:
-            pixmapimage = QPixmap("3Руководитель ботанического сада simulation3_3.jpg")
-            label.setText(text_simulation3_3)
-        elif hero3_button.text == hero_simulation4[2]:
-            pixmapimage = QPixmap("4Менеджер гостиницы simulation4_3.jpg")
-            label.setText(text_simulation4_3)
-        elif hero3_button.text == hero_sport1[2]:
-            pixmapimage = QPixmap("1.Экшен-парк и экстремальные условия sport 1.jpg")
-            label.setText(text_sport1)
-        elif hero3_button.text == hero_sport2[2]:
-            pixmapimage = QPixmap("2.Историческое воссоздание sport2.jpg")
-            label.setText(text_sport2)
-        elif hero3_button.text == hero_sport3[2]:
-            pixmapimage = QPixmap("3.Аркадный юмор и карикатурный стиль sport3.jpg")
-            label.setText(text_sport3) 
-        elif hero3_button.text == hero_sport4[2]:
-            pixmapimage = QPixmap("4.Фэнтези и альтернативная реальность sport4.jpg")
-            label.setText(text_sport4) 
-        elif hero3_button.text == hero_puzzle1[2]:
-            pixmapimage = QPixmap("1.Детективная история... частный детектив puzzle1.jpg")
-            label.setText(text_puzzle1)
-        elif hero3_button.text == hero_puzzle2[2]:
-            pixmapimage = QPixmap("2.Античные цивилизации.. археолог-исследователь puzzle2.jpg")
-            label.setText(text_puzzle2)
-        elif hero3_button.text == hero_puzzle3[2]:
-            pixmapimage = QPixmap("3.Пространственно-временные манипуляции... изобритатель puzzle3.jpg")
-            label.setText(text_puzzle3)
-        elif hero3_button.text == hero_puzzle4[2]:
-            pixmapimage = QPixmap("4.Пиксельная ретро-графика... Фанат старой школы puzzle4.jpg")
-            label.setText(text_puzzle4)
-        elif hero3_button.text == hero_indie1[2]:
-            pixmapimage = QPixmap("Темнота леса indie1_3.jpg")
-            label.setText(text_indie1_3)
-        elif hero3_button.text == hero_indie2[2]:
-            pixmapimage = QPixmap("Библиотека фантазий indie2_3.jpg")
-            label.setText(text_indie2_3)
-        elif hero3_button.text == hero_indie3[2]:
-            pixmapimage = QPixmap("Город машин indie3_3.jpg")
-            label.setText(text_indie3_3)
-        elif hero3_button.text == hero_indie4[2]:
-            pixmapimage = QPixmap("Заброшенная библиотека indie4_3.jpg")
-            label.setText(text_indie4_3)
-
-
-    
-def click_ok():
-    if button_next.text() == 'Начать заново':
-        restart()
-    elif button_next.text() == 'Показать результат':
-        show_result()
-
-def show_result():
-    typebox.hide()
-    setting.hide()
-    difficult.hide()
-    choose.hide()
-    hero.hide()
-    i_line.show()
-    label.show()
-    button_next.setText('Начать заново')
-
-def restart():
-    i_line.hide()
-    label.hide()
-    shuffle(types)
-    typegroup.setExclusive(False)    
-    type_button1.setChecked(False)
-    type_button2.setChecked(False)
-    type_button3.setChecked(False)
-    type_button4.setChecked(False)
-    typegroup.setExclusive(True) 
-    r = randint(1,2)
-    if r == 1:
-        type_button1.setText(types[0])
-        type_button2.setText(types[1])
-        type_button3.setText(types[2])
-        type_button4.setText(types[3])
-    elif r == 2:
-        type_button1.setText(types[4])
-        type_button2.setText(types[5])
-        type_button3.setText(types[6])
-        type_button4.setText(types[7])
-    typebox.show()
-    settinggroup.setExclusive(False)    
-    setting_button1.setChecked(False)
-    setting_button2.setChecked(False)
-    setting_button3.setChecked(False)
-    setting_button4.setChecked(False)
-    settinggroup.setExclusive(True) 
-    setting.show()
-    difficult.show()
-    choosegroup.setExclusive(False)
-    choose_solo.setChecked(False)
-    choose_multy.setChecked(False)
-    choosegroup.setExclusive(True)
-    choose.show()
-    hero_group.setExclusive(False)    
-    hero1_button.setChecked(False)
-    hero2_button.setChecked(False)
-    hero3_button.setChecked(False)
-    hero_group.setExclusive(True) 
-    hero.show()
-    button_next.setText('Показать результат')
-
-
-app = QApplication([])
-
-button_next = QPushButton('Показать результат')
-
-
-typebox = QGroupBox('Выбери жанр игры')
-type_button1 = QRadioButton()
-type_button1.setText(type1)
-type_button2 = QRadioButton()
-type_button2.setText(type2)
-type_button3 = QRadioButton()
-type_button3.setText(type3)
-type_button4 = QRadioButton()
-type_button4.setText(type4)
-type_button1.setCheckable(True)
-type_button2.setCheckable(True)
-type_button3.setCheckable(True)
-type_button4.setCheckable(True)
-typegroup = QButtonGroup()
-typegroup.addButton(type_button1)
-typegroup.addButton(type_button2)
-typegroup.addButton(type_button3)
-typegroup.addButton(type_button4)
-type_line1 = QHBoxLayout()
-type_line2 = QVBoxLayout()
-type_line3 = QVBoxLayout()
-type_line2.addWidget(type_button1)
-type_line2.addWidget(type_button2)
-type_line3.addWidget(type_button3)
-type_line3.addWidget(type_button4)
-type_line1.addLayout(type_line2)
-type_line1.addLayout(type_line3)
-typebox.setLayout(type_line1)
-
-setting = QGroupBox('Выбери сеттинг')
-setting_button1 = QRadioButton()
-setting_button1.setText('')
-setting_button2 = QRadioButton()
-setting_button2.setText('')
-setting_button3 = QRadioButton()
-setting_button3.setText('')
-setting_button4 = QRadioButton()
-setting_button4.setText('')
-setting_button1.setCheckable(True)
-setting_button2.setCheckable(True)
-setting_button3.setCheckable(True)
-setting_button4.setCheckable(True)
-settinggroup = QButtonGroup()
-settinggroup.addButton(setting_button1)
-settinggroup.addButton(setting_button2)
-settinggroup.addButton(setting_button3)
-settinggroup.addButton(setting_button4)
-setting_line1 = QHBoxLayout()
-setting_line2 = QVBoxLayout()
-setting_line3 = QVBoxLayout()
-setting_line2.addWidget(setting_button1)
-setting_line2.addWidget(setting_button2)
-setting_line3.addWidget(setting_button3)
-setting_line3.addWidget(setting_button4)
-setting_line1.addLayout(setting_line2)
-setting_line1.addLayout(setting_line3)
-setting.setLayout(setting_line1)
-
-difficult = QGroupBox('Выбери сложность')
-difficult_line1 = QVBoxLayout()
-difficult_line2 = QHBoxLayout()
-difficult_line3 = QHBoxLayout()
-difficult_slider = QSlider()
-difficult_slider.setOrientation(Qt.Horizontal)
-difficult_line2.addWidget(difficult_slider)
-text_easy = QLabel('Легко')
-text_normal = QLabel('Нормально')
-text_hard = QLabel('Сложно')
-text_expert = QLabel('Эксперт')
-text_survivle = QLabel('Режим выживания')
-difficult_line3.addWidget(text_easy)
-difficult_line3.addWidget(text_normal)
-difficult_line3.addWidget(text_hard)
-difficult_line3.addWidget(text_expert)
-difficult_line3.addWidget(text_survivle)
-difficult_line1.addLayout(difficult_line2)
-difficult_line1.addLayout(difficult_line3)
-difficult.setLayout(difficult_line1)
-
-choose = QGroupBox('Выбери тип игры')
-choose_solo = QCheckBox('Одиночный режим')
-choose_multy = QCheckBox('Мультиплеер')
-choose_solo.setCheckable(True)
-choose_multy.setCheckable(True)
-choosegroup = QButtonGroup()
-choosegroup.addButton(choose_solo)
-choosegroup.addButton(choose_multy)
-choose_line1 = QVBoxLayout()
-choose_line2 = QHBoxLayout()
-choose_line2.addWidget(choose_solo)
-choose_line2.addWidget(choose_multy)
-choose_line1.addLayout(choose_line2)
-choose.setLayout(choose_line1)
-
-hero = QGroupBox('Выбери героя')
-hero1_button = QCheckBox()
-hero1_button.setText('')
-hero2_button = QCheckBox()
-hero2_button.setText('')
-hero3_button = QCheckBox()
-hero3_button.setText('')
-hero1_button.setCheckable(True)
-hero2_button.setCheckable(True)
-hero3_button.setCheckable(True)
-hero_group = QButtonGroup()
-hero_group.addButton(hero1_button)
-hero_group.addButton(hero2_button)
-hero_group.addButton(hero3_button)
-hero_line1 = QHBoxLayout()
-hero_line2 = QVBoxLayout()
-hero_line3 = QVBoxLayout()
-hero_line4 = QVBoxLayout()
-hero_line2.addWidget(hero1_button)
-hero_line3.addWidget(hero2_button)
-hero_line4.addWidget(hero3_button)
-hero_line1.addLayout(hero_line2)
-hero_line1.addLayout(hero_line3)
-hero_line1.addLayout(hero_line4)
-hero.setLayout(hero_line1)
-
-i_line = QLabel()
-pixmapimage = QPixmap("1.Тайна советсткой империи action1_1.jpg")
-w,h = i_line.width(), i_line.height()
-pixmapimage = pixmapimage.scaled(w, h, Qt.KeepAspectRatio)
-i_line.setPixmap(pixmapimage)
-i_line.hide()
-
-label = QLabel('Сюжет игры')
-label.hide()
-
-layout_line1 = QHBoxLayout()
-layout_line2 = QVBoxLayout()
-layout_line3 = QVBoxLayout()
-layout_line4 = QHBoxLayout()
-layout_line5 = QHBoxLayout()
-layout_line2.addStretch(1)
-layout_line2.addWidget(typebox)
-layout_line2.addStretch(1)
-layout_line2.addWidget(difficult)
-layout_line2.addStretch(1)
-layout_line3.addStretch(1)
-layout_line3.addWidget(setting)
-layout_line3.addStretch(1)
-layout_line3.addWidget(choose)
-layout_line3.addStretch(1)
-layout_line1.addLayout(layout_line2, stretch=5)
-layout_line1.addStretch(1)
-layout_line1.addLayout(layout_line3, stretch=5)
-layout_line1.addWidget(i_line)
-layout_line1.addWidget(label)
-layout_line4.addStretch(1)
-layout_line4.addWidget(hero, stretch=10)
-layout_line4.addStretch(1)
-
-layout_line5.addStretch(1)
-layout_line5.addWidget(button_next, stretch=1)
-layout_line5.addStretch(1)
-
-main_layout = QVBoxLayout()
-main_layout.addLayout(layout_line1, stretch=1)
-main_layout.addStretch(1)
-main_layout.addLayout(layout_line4, stretch=1)
-main_layout.addStretch(1)
-main_layout.addLayout(layout_line5, stretch=1)
-main_layout.setSpacing(2)
-
-main = QWidget()
-main.setWindowTitle('Генератор идей для разработки видеоигр')
-main.resize(1000,500)
-main.setLayout(main_layout)
-
-type_button1.clicked.connect(choose_type)
-type_button2.clicked.connect(choose_type)
-type_button3.clicked.connect(choose_type)
-type_button4.clicked.connect(choose_type)
-
-setting_button1.clicked.connect(type_setting)
-setting_button2.clicked.connect(type_setting)
-setting_button3.clicked.connect(type_setting)
-setting_button4.clicked.connect(type_setting)
-
-hero1_button.clicked.connect(choose_image)
-hero2_button.clicked.connect(choose_image)
-hero3_button.clicked.connect(choose_image)
-
-
-button_next.clicked.connect(click_ok)
-
-
-main.show()
-app.exec_()
+if __name__ == '__main__':
+    main()
 
