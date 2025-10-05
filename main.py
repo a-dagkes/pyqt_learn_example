@@ -35,6 +35,7 @@ class MainWin(QWidget):
         self.hero_choice = ''
 
         self.button_next = QPushButton('Показать результат')
+        self.button_next.setMinimumWidth(200)
 
         self.typebox = QGroupBox('Выбери жанр игры')
         self.type_button1 = QRadioButton()
