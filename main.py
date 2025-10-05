@@ -1,7 +1,7 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
-    QApplication, QButtonGroup, QCheckBox, QGroupBox, 
-    QHBoxLayout, QLabel, QPushButton, QRadioButton, 
+    QApplication, QButtonGroup, QCheckBox, QGroupBox,
+    QHBoxLayout, QLabel, QPushButton, QRadioButton,
     QSlider, QVBoxLayout, QWidget
 )
 from PyQt5.QtGui import QIcon, QPixmap
@@ -9,6 +9,8 @@ from PyQt5.QtGui import QIcon, QPixmap
 from random import shuffle
 from pathlib import Path
 import json
+
+#from styles import MAIN_STYLE
 
 
 IMAGES_DIR = Path("images")
@@ -18,7 +20,7 @@ class MainWin(QWidget):
     def __init__(self, data=None):
         super().__init__()
         self.setWindowTitle('Генератор идей для разработки видеоигр')
-        self.resize(1000,500)
+        self.resize(1000, 650)
         self.setWindowIcon(QIcon('icon.png'))
         main_layout = QVBoxLayout()
         self.setLayout(main_layout)
@@ -47,6 +49,7 @@ class MainWin(QWidget):
         self.typegroup.addButton(self.type_button2)
         self.typegroup.addButton(self.type_button3)
         self.typegroup.addButton(self.type_button4)
+
         type_line1 = QHBoxLayout()
         type_line2 = QVBoxLayout()
         type_line3 = QVBoxLayout()
@@ -89,9 +92,13 @@ class MainWin(QWidget):
         difficult_line3 = QHBoxLayout()
         difficult_slider = QSlider()
         difficult_slider.setOrientation(Qt.Horizontal)
+        difficult_slider.setMinimum(0)
+        difficult_slider.setMaximum(4)
+        difficult_slider.setTickPosition(QSlider.TicksBelow)
+        difficult_slider.setTickInterval(1)
         difficult_line2.addWidget(difficult_slider)
         text_easy = QLabel('Легко')
-        text_normal = QLabel('Нормально')
+        text_normal = QLabel('Норм')
         text_hard = QLabel('Сложно')
         text_expert = QLabel('Эксперт')
         text_survivle = QLabel('Выживание')
@@ -103,7 +110,7 @@ class MainWin(QWidget):
         difficult_line1.addLayout(difficult_line2)
         difficult_line1.addLayout(difficult_line3)
         self.difficult.setLayout(difficult_line1)
-        
+
         self.choose = QGroupBox('Выбери тип игры')
         self.choose_solo = QCheckBox('Одиночный режим')
         self.choose_multy = QCheckBox('Мультиплеер')
@@ -360,11 +367,11 @@ def load_data(file_path="data.json"):
 def main():
     data = load_data('data.json')
     app = QApplication([])
+    #app.setStyleSheet(MAIN_STYLE)
     main_win = MainWin(data)
     main_win.show()
     app.exec_()
-    
+
 
 if __name__ == '__main__':
     main()
-
