@@ -10,7 +10,7 @@ from random import shuffle
 from pathlib import Path
 import json
 
-#from styles import MAIN_STYLE
+from styles import MAIN_STYLE
 
 
 IMAGES_DIR = Path("images")
@@ -137,16 +137,12 @@ class MainWin(QWidget):
         self.hero_group.addButton(self.hero1_button)
         self.hero_group.addButton(self.hero2_button)
         self.hero_group.addButton(self.hero3_button)
-        hero_line1 = QHBoxLayout()
-        hero_line2 = QVBoxLayout()
-        hero_line3 = QVBoxLayout()
-        hero_line4 = QVBoxLayout()
-        hero_line2.addWidget(self.hero1_button)
-        hero_line3.addWidget(self.hero2_button)
-        hero_line4.addWidget(self.hero3_button)
-        hero_line1.addLayout(hero_line2)
-        hero_line1.addLayout(hero_line3)
-        hero_line1.addLayout(hero_line4)
+        hero_line1 = QVBoxLayout()
+        hero_line1.addStretch()
+        hero_line1.addWidget(self.hero1_button)
+        hero_line1.addWidget(self.hero2_button)
+        hero_line1.addWidget(self.hero3_button)
+        hero_line1.addStretch()
         self.hero.setLayout(hero_line1)
 
         self.i_line = QLabel()
@@ -367,7 +363,7 @@ def load_data(file_path="data.json"):
 def main():
     data = load_data('data.json')
     app = QApplication([])
-    #app.setStyleSheet(MAIN_STYLE)
+    # app.setStyleSheet(MAIN_STYLE)
     main_win = MainWin(data)
     main_win.show()
     app.exec_()
