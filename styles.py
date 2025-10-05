@@ -75,7 +75,7 @@ QLabel {
 }
 
 #resultLabel {
-    font-size: 20px;
+    font-size: 18px;
     background-color: rgba(2, 8, 115, 0.5);
     border: 1px solid #020659;
     border-radius: 10px;
