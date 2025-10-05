@@ -13,15 +13,18 @@ import json
 from styles import MAIN_STYLE
 
 
-IMAGES_DIR = Path("images")
+IMAGES_DIR = Path(__file__).parent / "images"
+DATA_FILE = Path(__file__).parent / "data.json"
 
 
 class MainWin(QWidget):
     def __init__(self, data=None):
         super().__init__()
+        self.setObjectName("MainWin")
         self.setWindowTitle('Генератор идей для разработки видеоигр')
-        self.resize(1000, 650)
-        self.setWindowIcon(QIcon('icon.png'))
+        self.resize(1200, 700)
+        full_path = IMAGES_DIR / "icon.icns"  # или icon.png
+        self.setWindowIcon(QIcon(str(full_path)))
         main_layout = QVBoxLayout()
         self.setLayout(main_layout)
 
@@ -98,15 +101,15 @@ class MainWin(QWidget):
         difficult_slider.setTickInterval(1)
         difficult_line2.addWidget(difficult_slider)
         text_easy = QLabel('Легко')
-        text_normal = QLabel('Норм')
+        text_normal = QLabel('Нормально')
         text_hard = QLabel('Сложно')
         text_expert = QLabel('Эксперт')
         text_survivle = QLabel('Выживание')
-        difficult_line3.addWidget(text_easy)
-        difficult_line3.addWidget(text_normal)
-        difficult_line3.addWidget(text_hard)
-        difficult_line3.addWidget(text_expert)
-        difficult_line3.addWidget(text_survivle)
+        difficult_line3.addWidget(text_easy, alignment=Qt.AlignLeft)
+        difficult_line3.addWidget(text_normal, alignment=Qt.AlignLeft)
+        difficult_line3.addWidget(text_hard, alignment=Qt.AlignHCenter)
+        difficult_line3.addWidget(text_expert, alignment=Qt.AlignRight)
+        difficult_line3.addWidget(text_survivle, alignment=Qt.AlignRight)
         difficult_line1.addLayout(difficult_line2)
         difficult_line1.addLayout(difficult_line3)
         self.difficult.setLayout(difficult_line1)
@@ -138,52 +141,64 @@ class MainWin(QWidget):
         self.hero_group.addButton(self.hero2_button)
         self.hero_group.addButton(self.hero3_button)
         hero_line1 = QVBoxLayout()
-        hero_line1.addStretch()
         hero_line1.addWidget(self.hero1_button)
         hero_line1.addWidget(self.hero2_button)
         hero_line1.addWidget(self.hero3_button)
-        hero_line1.addStretch()
         self.hero.setLayout(hero_line1)
 
         self.i_line = QLabel()
+        self.i_line.setObjectName("imageLabel")
+        self.i_line.setFixedSize(450, 450)
+        self.i_line.setAlignment(Qt.AlignCenter)
+        self.i_line.setScaledContents(False)
 
         self.label = QLabel('Сюжет игры')
+        self.label.setObjectName("resultLabel")
         self.label.setWordWrap(True)
+        self.label.setAlignment(Qt.AlignTop | Qt.AlignLeft)
 
-        layout_line1 = QHBoxLayout()
-        layout_line2 = QVBoxLayout()
-        layout_line3 = QVBoxLayout()
-        layout_line4 = QHBoxLayout()
-        layout_line5 = QHBoxLayout()
-        layout_line2.addStretch(1)
-        layout_line2.addWidget(self.typebox)
-        layout_line2.addStretch(1)
-        layout_line2.addWidget(self.difficult)
-        layout_line2.addStretch(1)
-        layout_line3.addStretch(1)
-        layout_line3.addWidget(self.setting)
-        layout_line3.addStretch(1)
-        layout_line3.addWidget(self.choose)
-        layout_line3.addStretch(1)
-        layout_line1.addLayout(layout_line2, stretch=5)
-        layout_line1.addStretch(1)
-        layout_line1.addLayout(layout_line3, stretch=5)
-        layout_line1.addWidget(self.i_line)
-        layout_line1.addWidget(self.label)
-        layout_line4.addStretch(1)
-        layout_line4.addWidget(self.hero, stretch=10)
-        layout_line4.addStretch(1)
+        # Левая колонка (жанр + герой)
+        left_column = QVBoxLayout()
+        left_column.addWidget(self.typebox, 0, Qt.AlignTop)
+        left_column.addWidget(self.hero)
+        self.typebox.setMaximumHeight(self.height() // 2)
+        self.typebox.setMinimumHeight(self.height() // 2)
 
-        layout_line5.addStretch(1)
-        layout_line5.addWidget(self.button_next, stretch=1)
-        layout_line5.addStretch(1)
+        # Правая колонка (сеттинг + тип игры + сложность)
+        right_column = QVBoxLayout()
+        right_column.addWidget(self.setting)
+        right_column.addSpacing(20)
+        right_column.addWidget(self.choose)
+        right_column.addSpacing(15)
+        right_column.addWidget(self.difficult)
 
-        main_layout.addLayout(layout_line1, stretch=1)
-        main_layout.addStretch(1)
-        main_layout.addLayout(layout_line4, stretch=1)
-        main_layout.addStretch(1)
-        main_layout.addLayout(layout_line5, stretch=1)
-        main_layout.setSpacing(2)
+        # Горизонтальное деление: левая колонка (1 часть) и правая (2 части)
+        main_split = QHBoxLayout()
+        main_split.addLayout(left_column, 1)
+        main_split.addSpacing(40)
+        main_split.addLayout(right_column, 2)
+
+        button_layout = QHBoxLayout()
+        button_layout.addStretch()
+        button_layout.addWidget(self.button_next)
+        button_layout.addStretch()
+
+        self.result_container = QWidget()
+        result_layout = QHBoxLayout()
+        result_layout.setContentsMargins(0, 0, 0, 0)
+        result_layout.addStretch()
+        result_layout.addWidget(self.i_line)
+        result_layout.addSpacing(30)
+        result_layout.addWidget(self.label, 1)
+        result_layout.addStretch()
+        self.result_container.setLayout(result_layout)
+
+        main_layout.addLayout(main_split, 3)  # 1:2 по горизонтали
+        main_layout.addSpacing(20)
+        main_layout.addWidget(self.result_container)
+        main_layout.addSpacing(20)
+        main_layout.addLayout(button_layout)
+        main_layout.setContentsMargins(30, 30, 30, 30)
 
         self.type_button1.clicked.connect(self.choose_type)
         self.type_button2.clicked.connect(self.choose_type)
@@ -211,7 +226,12 @@ class MainWin(QWidget):
         self.type_button4.setText(self.types[3])
 
     def choose_type(self):
-        for button in (self.type_button1, self.type_button2, self.type_button3, self.type_button4):
+        for button in (
+            self.type_button1,
+            self.type_button2,
+            self.type_button3,
+            self.type_button4
+        ):
             if button.isChecked():
                 self.reset_setting()
                 self.reset_hero()
@@ -223,13 +243,23 @@ class MainWin(QWidget):
         if self.type_choice:
             setting_options = list(self.data[self.type_choice].keys())
             for button, setting_option in zip(
-                (self.setting_button1, self.setting_button2, self.setting_button3, self.setting_button4),
+                (
+                    self.setting_button1,
+                    self.setting_button2,
+                    self.setting_button3,
+                    self.setting_button4
+                ),
                 setting_options
             ):
                 button.setText(setting_option)
 
     def choose_setting(self):
-        for button in (self.setting_button1, self.setting_button2, self.setting_button3, self.setting_button4):
+        for button in (
+            self.setting_button1,
+            self.setting_button2,
+            self.setting_button3,
+            self.setting_button4
+        ):
             if button.isChecked():
                 self.reset_hero()
                 self.setting_choice = button.text()
@@ -238,7 +268,9 @@ class MainWin(QWidget):
 
     def set_hero_options(self):
         if self.type_choice and self.setting_choice:
-            hero_options = list(self.data[self.type_choice][self.setting_choice].keys())
+            hero_options = list(
+                self.data[self.type_choice][self.setting_choice].keys()
+            )
             shuffle(hero_options)
             for button, hero_option in zip(
                 (self.hero1_button, self.hero2_button, self.hero3_button),
@@ -291,6 +323,7 @@ class MainWin(QWidget):
         self.choosegroup.setExclusive(True)
 
     def start(self):
+        self.result_container.hide()
         self.i_line.hide()
         self.label.hide()
         shuffle(self.types)
@@ -313,22 +346,27 @@ class MainWin(QWidget):
         if pixmap.isNull():
             print(f"Ошибка загрузки: {image_path}")
             return
-        w, h = self.i_line.width(), self.i_line.height()
         pixmap = pixmap.scaled(
-            w, h, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation
+            430, 430,
+            Qt.AspectRatioMode.KeepAspectRatio,
+            Qt.TransformationMode.SmoothTransformation
         )
         self.i_line.setPixmap(pixmap)
         print(f'Картинка обновилась на {image_path}')
 
     def finalize_setup(self):
         if self.type_choice and self.setting_choice:
-            for button in (self.hero1_button, self.hero2_button, self.hero3_button):
+            for button in (
+                self.hero1_button,
+                self.hero2_button,
+                self.hero3_button
+            ):
                 if button.isChecked():
                     self.hero_choice = button.text()
                     game_data = self.data[self.type_choice][self.setting_choice][self.hero_choice]
                     self.set_image(game_data['image'])
                     self.label.setText(game_data['text'])
-        
+
     def click_ok(self):
         if self.button_next.text() == 'Начать заново':
             self.start()
@@ -344,10 +382,11 @@ class MainWin(QWidget):
             self.hero.hide()
             self.i_line.show()
             self.label.show()
+            self.result_container.show()
             self.button_next.setText('Начать заново')
 
 
-def load_data(file_path="data.json"):
+def load_data(file_path):
     """Загружает данные из JSON файла"""
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
@@ -361,9 +400,9 @@ def load_data(file_path="data.json"):
 
 
 def main():
-    data = load_data('data.json')
+    data = load_data(DATA_FILE)
     app = QApplication([])
-    # app.setStyleSheet(MAIN_STYLE)
+    app.setStyleSheet(MAIN_STYLE)
     main_win = MainWin(data)
     main_win.show()
     app.exec_()
