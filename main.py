@@ -23,7 +23,7 @@ class MainWin(QWidget):
         self.setObjectName("MainWin")
         self.setWindowTitle('Генератор идей для разработки видеоигр')
         self.resize(1200, 700)
-        full_path = IMAGES_DIR / "icon.icns"  # или icon.png
+        full_path = IMAGES_DIR / "icon.png"
         self.setWindowIcon(QIcon(str(full_path)))
         main_layout = QVBoxLayout()
         self.setLayout(main_layout)
